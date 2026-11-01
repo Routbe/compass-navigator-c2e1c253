@@ -5,10 +5,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
+import { BrandedHeadContent } from "@/components/seo/BrandedHeadContent";
+import { SEO_KEYWORDS, knowledgeGraphScripts } from "@/lib/knowledge-graph";
+import { BRAND } from "@/lib/page-title";
 import { useRouterState } from "@tanstack/react-router";
 import { DevModeToggle } from "@/components/DevModeToggle";
 
@@ -117,18 +119,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ...(isAdminMode() ? [{ name: "robots", content: "noindex, nofollow" }] : []),
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ROUT — QR-codes en korte links met karakter" },
+      { title: BRAND },
       {
         name: "description",
         content:
-          "Ontwerp stijlvolle QR-codes en trackbare korte links. Privacyvriendelijk en in eigen beheer.",
+          "ROUT is het soevereine besturingssysteem voor je digitale identiteit: één geverifieerde identiteit, privé-relais, Login met ROUT en routing aan de edge. Open source en Europees.",
       },
       { name: "author", content: "ROUT" },
-      { property: "og:title", content: "ROUT — QR-codes en korte links met karakter" },
+      { name: "keywords", content: SEO_KEYWORDS.join(", ") },
+      { property: "og:title", content: BRAND },
       {
         property: "og:description",
         content:
-          "Ontwerp stijlvolle QR-codes en trackbare korte links. Privacyvriendelijk en in eigen beheer.",
+          "ROUT is het soevereine besturingssysteem voor je digitale identiteit: één geverifieerde identiteit, privé-relais, Login met ROUT en routing aan de edge. Open source en Europees.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -153,6 +156,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
+    // Knowledge graph for search engines and AI crawlers; dropped on member pages by BrandedHeadContent.
+    scripts: isAdminMode() ? [] : knowledgeGraphScripts(),
   }),
 
   shellComponent: RootShell,
@@ -167,7 +172,7 @@ function RootShell({ children }: { children: ReactNode }) {
     // suppressHydrationWarning voorkomt een loze React-waarschuwing daarover.
     <html lang="en" suppressHydrationWarning>
       <head>
-        <HeadContent />
+        <BrandedHeadContent />
       </head>
       <body>
         {children}

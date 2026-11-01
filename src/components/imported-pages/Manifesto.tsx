@@ -66,6 +66,30 @@ export default function Manifesto() {
           ))}
         </div>
 
+        {/* Plain, structured definition of ROUT — written for readers and AI crawlers alike. */}
+        <section
+          aria-labelledby="what-is-rout"
+          data-testid="manifesto-what-is-rout"
+          className="mt-12 space-y-6 border-t-2 border-dashed border-border-ink/25 pt-8"
+        >
+          <span className="eyebrow">{t("manifesto.os.eyebrow")}</span>
+          <div>
+            <h2 id="what-is-rout" className="font-serif text-2xl font-semibold text-foreground">
+              {t("manifesto.os.title")}
+            </h2>
+            <p className="mt-2 font-sans text-[17px] leading-relaxed text-muted-foreground">{t("manifesto.os.what")}</p>
+          </div>
+          <div>
+            <h2 className="font-serif text-xl font-semibold text-foreground">{t("manifesto.os.devTitle")}</h2>
+            <p className="mt-2 font-sans text-base leading-relaxed text-muted-foreground">{t("manifesto.os.dev")}</p>
+          </div>
+          <div>
+            <h2 className="font-serif text-xl font-semibold text-foreground">{t("manifesto.os.securityTitle")}</h2>
+            <p className="mt-2 font-sans text-base leading-relaxed text-muted-foreground">{t("manifesto.os.security")}</p>
+          </div>
+        </section>
+
+
         <div className="mt-10 border-t-2 border-dashed border-border-ink/25 pt-8">
           <p className="font-mono text-sm text-muted-foreground">
             {t("manifesto.outro")}{" "}

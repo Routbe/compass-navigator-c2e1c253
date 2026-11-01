@@ -108,9 +108,11 @@ export default function Gateway() {
       <section className="omni-stage">
         <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-3xl flex-col items-center justify-center px-4 py-16 text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Sovereign Digital Node</p>
-          <h1 className="mt-5 font-display text-4xl leading-[1.05] sm:text-6xl">Wat wil je routeren?</h1>
+          <h1 className="mt-5 font-display text-4xl leading-[1.05] sm:text-6xl">
+            Sovereign Digital Identity &amp; Routing Infrastructure
+          </h1>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Sovereign Digital Identity &amp; Routing Infrastructure — Europees, open source, zonder trackers.
+            Plak een URL, typ een @handle of een commando — Europees, open source, zonder trackers.
           </p>
 
           <form
@@ -129,7 +131,7 @@ export default function Gateway() {
                 id="omni-input"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Voer een URL, commando of @handle in"
+                placeholder="Wat wil je routeren?"
                 autoComplete="off"
                 autoCapitalize="none"
                 spellCheck={false}

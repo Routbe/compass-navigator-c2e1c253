@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Page from "@/components/imported-pages/Dashboard";
+import { CommandCenter } from "@/components/dashboard/CommandCenter";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
+const TITLE = "Command Center | ROUT";
+const DESC = "Je soevereine cockpit: identiteit, inbox, agenda, prikbord en statistieken in één overzicht.";
+
+export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
     meta: [
-      { title: "Dashboard | ROUT" },
-      { name: "description", content: "Beheer je ROUT-account, links en QR-codes." },
+      { title: TITLE },
+      { name: "description", content: DESC },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Dashboard | ROUT" },
-      { property: "og:description", content: "Beheer je ROUT-account, links en QR-codes." },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Page,
+  component: CommandCenter,
 });

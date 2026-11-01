@@ -38,6 +38,8 @@ interface AppLayoutProps {
   trustBadges?: boolean;
   /** Fades the footer in once it scrolls into view (Omni-Bar gateway). */
   revealFooter?: boolean;
+  /** "obsidian" renders the whole frame (header, page, footer) in the dark palette. */
+  tone?: "default" | "obsidian";
 }
 
 /**
@@ -54,6 +56,7 @@ export function AppLayout({
   width = "default",
   trustBadges = false,
   revealFooter = false,
+  tone = "default",
 }: AppLayoutProps) {
   const hidden = useHeaderReveal();
   const { t } = useTranslation();
@@ -97,7 +100,7 @@ export function AppLayout({
   );
   if (Frame) return <Frame heading={heading} width={width}>{children}</Frame>;
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className={cn("flex min-h-screen flex-col bg-background text-foreground", tone === "obsidian" && "dark")}>
       <header
         data-testid="app-header"
         data-hidden={hidden ? "true" : "false"}

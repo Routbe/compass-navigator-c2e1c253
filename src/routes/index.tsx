@@ -1,8 +1,8 @@
 import { pageCardImage } from "@/lib/page-cards";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { getGatewaySession } from "@/lib/gateway.functions";
 import Page from "@/components/imported-pages/Gateway";
-import { HostProfile } from "@/components/imported-pages/HostProfile";
 import { getRequestLocale } from "@/lib/locale.functions";
 import { resolveHostProfile } from "@/lib/domain-routing.functions";
 import { OG_IMAGE, canonicalLinks, jsonLdScript, socialMeta } from "@/lib/social-meta";
@@ -67,10 +67,19 @@ export const Route = createFileRoute("/")({
   component: HomeRoute,
 });
 
+// Custom-domain profiles only: kept out of the marketing gateway bundle.
+const HostProfile = lazy(() => import("@/components/imported-pages/HostProfile").then((m) => ({ default: m.HostProfile })));
+
 /** Op een gekoppeld eigen domein toont "/" het profiel van die eigenaar. */
 function HomeRoute() {
   const { hostHandle } = Route.useLoaderData();
-  if (hostHandle) return <HostProfile handle={hostHandle} />;
+  if (hostHandle) {
+    return (
+      <Suspense fallback={null}>
+        <HostProfile handle={hostHandle} />
+      </Suspense>
+    );
+  }
   return <Page />;
 }
 

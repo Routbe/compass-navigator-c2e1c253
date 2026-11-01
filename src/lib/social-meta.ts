@@ -15,24 +15,24 @@ type Card = { title: string; description: string };
 
 export const SOCIAL_CARDS: Record<Locale, Card> = {
   nl: {
-    title: "ROUT — QR-codes en korte links met karakter",
+    title: "ROUT - Sovereign Digital Identity OS",
     description:
-      "Maak stijlvolle QR-codes en trackbare korte links. Gratis te gebruiken, privacyvriendelijk en volledig in eigen beheer.",
+      "Het soevereine besturingssysteem voor je digitale identiteit: één geverifieerde identiteit, privé-relais per app, Login met ROUT en routing aan de edge. Open source (AGPLv3) en Europees.",
   },
   en: {
-    title: "ROUT — QR codes and short links with character",
+    title: "ROUT - Sovereign Digital Identity OS",
     description:
-      "Create stylish QR codes and trackable short links. Free, privacy-friendly, and fully self-hosted.",
+      "The sovereign operating system for your digital identity: one verified identity, private relays per app, Login with ROUT and edge routing. Open source (AGPLv3) and European.",
   },
   fr: {
-    title: "ROUT — Des QR codes et liens courts avec du caractère",
+    title: "ROUT - Sovereign Digital Identity OS",
     description:
-      "Créez des QR codes élégants et des liens courts traçables. Gratuit, respectueux de la vie privée et entièrement auto-hébergé.",
+      "Le système d'exploitation souverain de votre identité numérique : une identité vérifiée, des relais privés par app, Login avec ROUT et routage en edge. Open source (AGPLv3) et européen.",
   },
   de: {
-    title: "ROUT — QR-Codes und Kurzlinks mit Charakter",
+    title: "ROUT - Sovereign Digital Identity OS",
     description:
-      "Erstelle stilvolle QR-Codes und nachverfolgbare Kurzlinks. Kostenlos, datenschutzfreundlich und vollständig selbst gehostet.",
+      "Das souveräne Betriebssystem für deine digitale Identität: eine verifizierte Identität, private Relays pro App, Login mit ROUT und Edge-Routing. Open Source (AGPLv3) und europäisch.",
   },
 };
 

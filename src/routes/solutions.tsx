@@ -1,0 +1,2 @@
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+export const Route = createFileRoute("/solutions")({ head: () => ({ meta: [{"title": "ROUT solutions"}, {"name": "description", "content": "Explore solutions for ROUT QR codes, links and profiles."}, {"property": "og:title", "content": "ROUT solutions"}, {"property": "og:description", "content": "Explore solutions for ROUT QR codes, links and profiles."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary_large_image"}] }), component: Outlet });

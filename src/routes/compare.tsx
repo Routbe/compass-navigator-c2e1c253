@@ -1,0 +1,2 @@
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+export const Route = createFileRoute("/compare")({ head: () => ({ meta: [{"title": "ROUT comparisons"}, {"name": "description", "content": "Explore comparisons for ROUT QR codes, links and profiles."}, {"property": "og:title", "content": "ROUT comparisons"}, {"property": "og:description", "content": "Explore comparisons for ROUT QR codes, links and profiles."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary_large_image"}] }), component: Outlet });

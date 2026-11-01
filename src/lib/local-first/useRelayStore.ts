@@ -20,6 +20,9 @@ export function useRelayStore(userId: string | null) {
   const state = useLocalFirst<IdentityRelay[]>(userId ? `relays:${userId}` : null, () => list());
   const [pending, setPending] = useState(0);
   const flushing = useRef(false);
+  const refreshRef = useRef(state.refresh);
+  refreshRef.current = state.refresh;
+  const { mutate } = state;
 
   const flush = useCallback(async () => {
     if (!userId || flushing.current) return;
@@ -41,11 +44,11 @@ export function useRelayStore(userId: string | null) {
         await saveQueue(userId, queue);
       }
       setPending(queue.length);
-      if (changed) void state.refresh();
+      if (changed) void refreshRef.current();
     } finally {
       flushing.current = false;
     }
-  }, [userId, setStatus, state]);
+  }, [userId, setStatus]);
 
   // Resume anything left from a previous session, and retry when back online.
   useEffect(() => {
@@ -63,14 +66,14 @@ export function useRelayStore(userId: string | null) {
     async (relay: IdentityRelay) => {
       if (!userId) return;
       const status = relay.status === "active" ? "paused" : "active";
-      state.mutate((prev) => (prev ?? []).map((r) => (r.id === relay.id ? { ...r, status } : r)));
+      mutate((prev) => (prev ?? []).map((r) => (r.id === relay.id ? { ...r, status } : r)));
       const m: OutboxMutation = { id: crypto.randomUUID(), kind: "relay.status", relayId: relay.id, status, queuedAt: Date.now() };
       const queue = enqueue(await loadQueue(userId), m);
       await saveQueue(userId, queue);
       setPending(queue.length);
       void flush();
     },
-    [userId, state, flush],
+    [userId, mutate, flush],
   );
 
   return { relays: state.data, syncing: state.syncing || pending > 0, pending, toggle, refresh: state.refresh, error: state.error };

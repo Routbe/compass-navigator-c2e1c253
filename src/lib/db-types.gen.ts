@@ -808,6 +808,18 @@ export interface PublicIdentityLinksRow {
   "revoked_at": string | Date | null;
 }
 
+export interface PublicIdentityRelayMergeArchiveRow {
+  "id": string;
+  "user_id": string;
+  "merged_from_user_id": string;
+  "connected_app_id": string;
+  "proxy_email": string;
+  "target_email": string;
+  "status": string;
+  "relay_created_at": string | Date;
+  "archived_at": string | Date;
+}
+
 export interface PublicIdentityRelaysRow {
   "id": string;
   "user_id": string;
@@ -2127,6 +2139,7 @@ export interface DbTables {
   "public.identity_labels": PublicIdentityLabelsRow;
   "public.identity_link_events": PublicIdentityLinkEventsRow;
   "public.identity_links": PublicIdentityLinksRow;
+  "public.identity_relay_merge_archive": PublicIdentityRelayMergeArchiveRow;
   "public.identity_relays": PublicIdentityRelaysRow;
   "public.identity_verification_sessions": PublicIdentityVerificationSessionsRow;
   "public.identity_verifications": PublicIdentityVerificationsRow;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Mail, Send, Webhook } from "lucide-react";
+import { Copy, Fingerprint, Loader2, Mail, Send, ShieldCheck, Webhook } from "lucide-react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ConnectedAppsPanel } from "@/components/settings/ConnectedAppsPanel";
@@ -10,18 +10,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { useAuth } from "@/hooks/useAuth";
+import { useRelayStore } from "@/lib/local-first/useRelayStore";
 import { startPrimaryEmailChange } from "@/lib/auth/email-safety.functions";
-import { bulkUpdateAppEmails, listAppEmails, listConnectedApps } from "@/lib/oauth/connected-apps.functions";
+import { bulkUpdateAppEmails, listAppEmails, listConnectedApps, setAppEmail } from "@/lib/oauth/connected-apps.functions";
 import { isPushable, pushableIds, toggleAll, togglePick } from "@/lib/identity-push";
 
 /**
- * /dashboard/identity — Identity & Email Push Engine.
- * 1. Change the primary address (verified by mail, step-up protected).
- * 2. Pick the connected apps that receive it via the ROUT Push Protocol: a
- *    signed `email.updated` webhook to each app's back-channel.
+ * /dashboard/identity — Identity Relays & Connected Apps.
+ * 1. Identity Relays (primary model): each app only sees a ROUT proxy address
+ *    that forwards to the member's real address; a primary change never has to
+ *    be pushed. Pause/resume is local-first (0 ms UI, background sync).
+ * 2. Change the primary address (verified by mail, step-up protected).
+ * 3. Fallback for apps that still know the real address: the ROUT Push Protocol
+ *    (signed `email.updated` webhook per selected app).
  */
 export function IdentityHub() {
   const qc = useQueryClient();
+  const { user } = useAuth();
+  const relayStore = useRelayStore(user?.id ?? null);
+  const enableRelay = useServerFn(setAppEmail);
+  const [enabling, setEnabling] = useState<string | null>(null);
   const listApps = useServerFn(listConnectedApps);
   const listEmails = useServerFn(listAppEmails);
   const startChange = useServerFn(startPrimaryEmailChange);
@@ -39,6 +49,29 @@ export function IdentityHub() {
   const stale = mail.data?.stale ?? [];
   const selectable = pushableIds(rows);
   const allPicked = selectable.length > 0 && selectable.every((id) => picked.includes(id));
+
+  const relays = relayStore.relays ?? [];
+  const relayApps = new Set(relays.map((r) => r.appId));
+  const withoutRelay = (apps.data ?? []).filter((a) => !relayApps.has(a.clientId));
+  const relayOffered = (clientId: string) =>
+    Boolean(mail.data?.apps.find((m) => m.clientId === clientId)?.options.some((o) => o.source === "relay"));
+
+  async function onEnableRelay(clientId: string, name: string) {
+    setEnabling(clientId);
+    try {
+      await withStepUp(() => enableRelay({ data: { clientId, choiceId: "relay" } }));
+      toast.success(`${name} ziet voortaan alleen je ROUT-alias.`);
+      await Promise.all([
+        relayStore.refresh(),
+        qc.invalidateQueries({ queryKey: ["connected-apps"] }),
+        qc.invalidateQueries({ queryKey: ["connected-app-emails"] }),
+      ]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Relay inschakelen mislukt.");
+    } finally {
+      setEnabling(null);
+    }
+  }
 
   async function onChangeEmail() {
     setBusy("email");
@@ -78,6 +111,84 @@ export function IdentityHub() {
     >
       <div className="space-y-4">
         <section className="space-y-3 rounded-2xl border border-border bg-card p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="flex items-center gap-2 text-lg font-medium">
+              <Fingerprint className="h-4 w-4" /> Identity Relays
+            </h2>
+            {relayStore.pending > 0 ? (
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" /> synchroniseren…
+              </span>
+            ) : null}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Een gekoppelde app ziet enkel een anoniem ROUT-alias. Mail naar dat alias komt bij je échte adres
+            ({mail.data?.primary ?? "—"}) aan. Wijzig je je adres, dan volgt elke relay automatisch — er hoeft niets naar de app
+            gepusht te worden. Pauzeren houdt alle mail van die app tegen.
+          </p>
+
+          {relayStore.relays === null ? (
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          ) : relays.length ? (
+            <ul className="divide-y divide-border rounded-xl border border-border">
+              {relays.map((r) => (
+                <li key={r.id} className="flex flex-wrap items-center gap-3 p-3">
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{r.appName}</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="truncate font-mono text-xs text-muted-foreground">{r.proxyEmail}</span>
+                      <button
+                        type="button"
+                        className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
+                        aria-label={`Alias van ${r.appName} kopiëren`}
+                        onClick={() => {
+                          void navigator.clipboard.writeText(r.proxyEmail);
+                          toast.success("Alias gekopieerd.");
+                        }}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </button>
+                    </span>
+                    <span className="block truncate text-[11px] text-muted-foreground">→ {r.targetEmail}</span>
+                  </span>
+                  <Badge variant={r.status === "active" ? "secondary" : "outline"} className="text-xs font-normal">
+                    {r.status === "active" ? "actief" : "gepauzeerd"}
+                  </Badge>
+                  <Switch
+                    checked={r.status === "active"}
+                    onCheckedChange={() => void relayStore.toggle(r)}
+                    aria-label={`Relay voor ${r.appName} ${r.status === "active" ? "pauzeren" : "hervatten"}`}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rounded-xl bg-muted/40 p-4 text-sm text-muted-foreground">Nog geen relays actief.</p>
+          )}
+
+          {withoutRelay.length ? (
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Apps met je echte adres</p>
+              <ul className="space-y-2">
+                {withoutRelay.map((a) => (
+                  <li key={a.clientId} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border p-3">
+                    <span className="min-w-0 truncate text-sm font-medium">{a.name}</span>
+                    {relayOffered(a.clientId) ? (
+                      <Button size="sm" variant="outline" disabled={enabling === a.clientId} onClick={() => void onEnableRelay(a.clientId, a.name)}>
+                        {enabling === a.clientId ? <Loader2 className="h-4 w-4 animate-spin" /> : "Privé-relay inschakelen"}
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Relay-engine niet beschikbaar voor deze app</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+        </section>
+
+        <section className="space-y-3 rounded-2xl border border-border bg-card p-4 sm:p-5">
           <h2 className="flex items-center gap-2 text-lg font-medium">
             <Mail className="h-4 w-4" /> Primair e-mailadres
           </h2>
@@ -110,7 +221,7 @@ export function IdentityHub() {
         <section className="space-y-3 rounded-2xl border border-border bg-card p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-lg font-medium">
-              <Webhook className="h-4 w-4" /> ROUT Push Protocol
+              <Webhook className="h-4 w-4" /> ROUT Push Protocol <Badge variant="outline" className="text-xs font-normal">fallback</Badge>
             </h2>
             {selectable.length > 0 ? (
               <Button variant="outline" size="sm" onClick={() => setPicked(toggleAll(rows, picked))}>
@@ -119,7 +230,7 @@ export function IdentityHub() {
             ) : null}
           </div>
           <p className="text-sm text-muted-foreground">
-            Kies welke gekoppelde apps je primaire adres ({mail.data?.primary ?? "—"}) krijgen. Elke app ontvangt een ondertekende
+            Alleen voor apps die je echte adres nog kennen. Kies welke gekoppelde apps je primaire adres ({mail.data?.primary ?? "—"}) krijgen. Elke app ontvangt een ondertekende
             <code className="mx-1 rounded bg-muted px-1 py-0.5 font-mono text-xs">email.updated</code>webhook. Apps met een privé-relay
             houden hun relay-adres.
           </p>

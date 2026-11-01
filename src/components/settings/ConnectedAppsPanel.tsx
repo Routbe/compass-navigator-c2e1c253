@@ -20,7 +20,7 @@ import {
 const SOURCE_LABEL = { primary: "Primair", alias: "Contact-alias", relay: "Privé-relay" } as const;
 
 /** "Gekoppelde Apps & E-mail Beheer": apps via "Login met ROUT", per-app email and revoke. */
-export function ConnectedAppsPanel() {
+export function ConnectedAppsPanel({ autoWizard = true }: { autoWizard?: boolean } = {}) {
   const list = useServerFn(listConnectedApps);
   const emails = useServerFn(listAppEmails);
   const revoke = useServerFn(revokeConnectedApp);
@@ -36,7 +36,7 @@ export function ConnectedAppsPanel() {
 
   // Primary address changed since these apps got theirs: open the wizard once.
   useEffect(() => {
-    if (stale.length) {
+    if (autoWizard && stale.length) {
       setPicked(stale);
       setWizard(true);
     }

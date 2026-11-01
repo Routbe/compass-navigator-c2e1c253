@@ -92,6 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // before the cookie disappears, so nothing 401s or survives the back button.
     await queryClient.cancelQueries();
     queryClient.clear();
+    // Local-first snapshots are private: never leave them on a shared device.
+    await import("@/lib/local-first/snapshot-store").then((m) => m.clearSnapshots()).catch(() => undefined);
     try {
       await authClient.signOut();
     } catch {

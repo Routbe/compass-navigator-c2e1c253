@@ -8471,6 +8471,144 @@
     },
     {
       "schema": "public",
+      "name": "identity_relays",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "notNull": true,
+          "default": "gen_random_uuid()",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "connected_app_id",
+          "type": "text",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "proxy_email",
+          "type": "text",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "target_email",
+          "type": "text",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "notNull": true,
+          "default": "'active'::text",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "identity_relays_connected_app_id_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (connected_app_id) REFERENCES oauth_clients(client_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "identity_relays_pkey",
+          "kind": "p",
+          "def": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "identity_relays_proxy_email_check",
+          "kind": "c",
+          "def": "CHECK (((char_length(proxy_email) <= 254) AND (proxy_email ~ '^[a-z0-9][a-z0-9._-]{2,63}@[a-z0-9-]+(\\.[a-z0-9-]+)+$'::text)))"
+        },
+        {
+          "name": "identity_relays_proxy_email_key",
+          "kind": "u",
+          "def": "UNIQUE (proxy_email)"
+        },
+        {
+          "name": "identity_relays_status_check",
+          "kind": "c",
+          "def": "CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'revoked'::text])))"
+        },
+        {
+          "name": "identity_relays_target_email_check",
+          "kind": "c",
+          "def": "CHECK ((((char_length(target_email) >= 3) AND (char_length(target_email) <= 254)) AND (POSITION(('@'::text) IN (target_email)) > 1)))"
+        },
+        {
+          "name": "identity_relays_user_id_connected_app_id_key",
+          "kind": "u",
+          "def": "UNIQUE (user_id, connected_app_id)"
+        },
+        {
+          "name": "identity_relays_user_id_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX identity_relays_user ON public.identity_relays USING btree (user_id, status)"
+      ],
+      "triggers": [],
+      "rls": true,
+      "forceRls": false,
+      "policies": [
+        {
+          "name": "rout_scope",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "ALL",
+          "using": "(user_id = rout_current_user_id())",
+          "check": "(user_id = rout_current_user_id())"
+        }
+      ],
+      "grants": {
+        "rout_app": [
+          "DELETE",
+          "INSERT",
+          "SELECT",
+          "UPDATE"
+        ]
+      }
+    },
+    {
+      "schema": "public",
       "name": "identity_verification_sessions",
       "columns": [
         {

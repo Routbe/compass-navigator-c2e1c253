@@ -1170,3 +1170,26 @@ select:focus-visible {
 .rout-eq i:nth-child(4) { animation-delay: -.15s; }
 @keyframes rout-eq { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .rout-eq i { animation: none; transform: scaleY(.6); } }
+
+/* Sovereign Omni-Bar gateway: dark zen stage + below-the-fold reveal. */
+.omni-stage {
+  background-image:
+    radial-gradient(60% 45% at 50% 0%, hsl(var(--accent) / 0.35), transparent 70%),
+    radial-gradient(40% 30% at 50% 100%, hsl(var(--sage) / 0.12), transparent 70%);
+}
+.omni-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.omni-reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .omni-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

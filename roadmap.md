@@ -9,3 +9,16 @@
 - [x] Footer: 4 balanced columns (Platform / Infrastructure / Ecosystem / Support & Legal)
 - [x] Verify: tsgo exit 0, 1415/1415 tests pass, browser check of contact/footer/sitemap/JSON-LD
 - [x] Performance: duplicate-call check done — the two double fetches (health, showcase) are dev-only effect remounts of idempotent GETs, no production impact
+
+## Sovereign OS refactor (Nov 2026)
+- [x] Link Neon database connection
+- [x] `/` Omni-Bar gateway: smart parser (URL → Studio QR, @handle, commands), below-the-fold reveal
+- [x] Signed-in visitors on `/` redirected server-side to `/dashboard` (not on custom-domain profiles)
+- [x] `/dashboard` cockpit: bento widgets left + Chronos event stream right
+- [x] Old dashboard content moved to `/dashboard/assets`, `/dashboard/qr`, `/dashboard/links`
+- [x] `/dashboard/identity`: connected apps + primary-email change with per-app push selection
+- [x] `identity_relays` table (migration + schema)
+- [x] Local-first snapshot cache for dashboard state
+- [x] tsgo exit 0 + tests
+- [x] Short-link resolver: isolate edge cache (15 s) with a KV-ready store interface
+- [ ] Account-merge SQL function (db/0152, still pending review) does not move identity_relays yet — needs regeneration when 0152 is applied

@@ -18,6 +18,7 @@ import { safeExternalRedirect } from "@/lib/security/safe-redirect.server";
 import { sql } from "@/lib/neon";
 import { parseAgent } from "@/lib/user-agent";
 import { enforceRateLimit, RateLimitError } from "@/lib/rate-limit.server";
+import { linkCache } from "@/lib/edge-link-cache";
 
 export type ResolveStatus =
   "ok" | "not_found" | "disabled" | "expired" | "suspended" | "paused" | "error";
@@ -83,6 +84,13 @@ export async function resolveShortLink(
     throw error;
   }
 
+  // Edge cache hit: skip every database lookup except the fire-and-forget counter.
+  const cached = await Promise.resolve(linkCache.get(code)).catch(() => null);
+  if (cached) {
+    logScan(cached.id, request);
+    return { status: "ok", targetUrl: cached.targetUrl, id: cached.id };
+  }
+
   let row: ResolveShortLinkRow | undefined;
   try {
     const rows = (await sql.query(`select * from public.resolve_short_link($1)`, [
@@ -138,23 +146,28 @@ export async function resolveShortLink(
     // A failing owner lookup must never break a healthy redirect.
   }
 
+  logScan(row.id, request);
+
+  // Trusted owners (tier 1/2, verified, or confirmed email older than 7 days) redirect directly; other links show the /go "you are leaving ROUT" page.
+  const destination = await safeExternalRedirect(row.target_url, trustedOwner);
+  if (!destination) return { status: "error" };
+  await Promise.resolve(linkCache.set(code, { id: row.id, targetUrl: destination })).catch(() => undefined);
+  return { status: "ok", targetUrl: destination, id: row.id };
+}
+
+/** Fire-and-forget: counting must never delay the redirect. */
+function logScan(id: string, request: Request): void {
   const ua = request.headers.get("user-agent");
   const agent = parseAgent(ua);
-  // Fire-and-forget: counting must never delay the redirect.
   void sql
     .query(
       `select public.log_qr_scan(_tracked_qr_id => $1, _device => $2, _country => $3, _browser => $4, _os => $5)`,
-      [row.id, deviceFromAgent(ua), request.headers.get("cf-ipcountry"), agent.browser, agent.os],
+      [id, deviceFromAgent(ua), request.headers.get("cf-ipcountry"), agent.browser, agent.os],
     )
     .then(
       () => undefined,
       () => undefined,
     );
-
-  // Trusted owners (tier 1/2, verified, or confirmed email older than 7 days) redirect directly; other links show the /go "you are leaving ROUT" page.
-  const destination = await safeExternalRedirect(row.target_url, trustedOwner);
-  if (!destination) return { status: "error" };
-  return { status: "ok", targetUrl: destination, id: row.id };
 }
 
 export function shortLinkDestination(target: string, trustedOwner: boolean): string {

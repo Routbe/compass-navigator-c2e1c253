@@ -1,5 +1,6 @@
 import { pageCardImage } from "@/lib/page-cards";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getGatewaySession } from "@/lib/gateway.functions";
 import Page from "@/components/imported-pages/Gateway";
 import { HostProfile } from "@/components/imported-pages/HostProfile";
 import { getRequestLocale } from "@/lib/locale.functions";
@@ -15,6 +16,11 @@ export const Route = createFileRoute("/")({
       getRequestLocale().catch(() => ({ locale: "en" as const })),
       resolveHostProfile().catch(() => ({ handle: null as string | null })),
     ]);
+    // Gateway sluice: a signed-in member's root is the cockpit (never on a member's own domain).
+    if (!host.handle) {
+      const session = await getGatewaySession().catch(() => ({ signedIn: false }));
+      if (session.signedIn) throw redirect({ to: "/dashboard", replace: true });
+    }
     const hostProfile = host.handle ? await getPublicProfileByHandle({ data: { handle: host.handle } }).catch(() => null) : null;
     return { ...locale, hostHandle: host.handle, hostProfile };
   },

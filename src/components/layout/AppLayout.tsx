@@ -17,6 +17,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { cn } from "@/lib/utils";
 import { usePortalFrame } from "./PortalContext";
 import { useHeaderReveal } from "@/hooks/useHeaderReveal";
+import { useReveal } from "@/hooks/useReveal";
 
 export interface Crumb {
   label: string;
@@ -35,6 +36,8 @@ interface AppLayoutProps {
   width?: "default" | "wide" | "full";
   /** Toont de vertrouwensbalk direct boven de footer (home, about, studio). */
   trustBadges?: boolean;
+  /** Fades the footer in once it scrolls into view (Omni-Bar gateway). */
+  revealFooter?: boolean;
 }
 
 /**
@@ -50,6 +53,7 @@ export function AppLayout({
   actions,
   width = "default",
   trustBadges = false,
+  revealFooter = false,
 }: AppLayoutProps) {
   const hidden = useHeaderReveal();
   const { t } = useTranslation();
@@ -137,9 +141,18 @@ export function AppLayout({
       </main>
 
       {trustBadges && <TrustBadgesBar className="mt-10" />}
-      <Footer />
+      {revealFooter ? <RevealedFooter /> : <Footer />}
       <BackToTop />
       <NameOnboardingDialog />
+    </div>
+  );
+}
+
+function RevealedFooter() {
+  const { ref, visible } = useReveal<HTMLDivElement>();
+  return (
+    <div ref={ref} data-visible={visible ? "true" : "false"} className="omni-reveal">
+      <Footer />
     </div>
   );
 }

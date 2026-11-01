@@ -808,6 +808,17 @@ export interface PublicIdentityLinksRow {
   "revoked_at": string | Date | null;
 }
 
+export interface PublicIdentityRelaysRow {
+  "id": string;
+  "user_id": string;
+  "connected_app_id": string;
+  "proxy_email": string;
+  "target_email": string;
+  "status": string;
+  "created_at": string | Date;
+  "updated_at": string | Date;
+}
+
 export interface PublicIdentityVerificationSessionsRow {
   "state": string;
   "user_id": string;
@@ -2116,6 +2127,7 @@ export interface DbTables {
   "public.identity_labels": PublicIdentityLabelsRow;
   "public.identity_link_events": PublicIdentityLinkEventsRow;
   "public.identity_links": PublicIdentityLinksRow;
+  "public.identity_relays": PublicIdentityRelaysRow;
   "public.identity_verification_sessions": PublicIdentityVerificationSessionsRow;
   "public.identity_verifications": PublicIdentityVerificationsRow;
   "public.influencer_requests": PublicInfluencerRequestsRow;

@@ -38,7 +38,11 @@ export async function ensureForwardingAddress(userId: string, clientId: string):
     values (${userId}, ${clientId}, ${local})
     on conflict (user_id, client_id) do update set status = 'active', updated_at = now()
     returning alias_local`) as Row[];
-  return `${String(rows[0]?.["alias_local"] ?? local)}@${forwardDomain()}`;
+  const address = `${String(rows[0]?.["alias_local"] ?? local)}@${forwardDomain()}`;
+  // Keep the identity relay registry in lockstep with the delivery rule.
+  const { recordRelay } = await import("./identity-relays.server");
+  await recordRelay(userId, clientId, address);
+  return address;
 }
 
 export type InboundMail = {

@@ -11,52 +11,45 @@ import {
   KeyRound,
   LayoutTemplate,
   Loader2,
+  Mail,
   MessageCircleQuestion,
   Megaphone,
   QrCode,
   RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { BrandLoader } from "@/components/BrandLoader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Link, useNavigate } from "@/lib/router-compat";
 import { useAuth } from "@/hooks/useAuth";
-import { getDashboardOverview } from "@/lib/dashboard.functions";
 import { getCommandCenter, type ChronosEvent, type ChronosKind, type CommandCenterData } from "@/lib/command-center.functions";
 import { useLocalFirst } from "@/lib/local-first/useLocalFirst";
+import { useRelayStore } from "@/lib/local-first/useRelayStore";
 import { parseOmniInput } from "@/lib/omni-parser";
 import { cn } from "@/lib/utils";
 
-interface Overview {
-  saved: number;
-  tracked: number;
-  scans: number;
-  trend: number[];
-}
-
-interface CockpitState {
-  overview: Overview | null;
-  center: CommandCenterData | null;
-}
-
 const KIND_ICON: Record<ChronosKind, typeof Inbox> = {
   notification: Inbox,
+  contact: Mail,
   question: MessageCircleQuestion,
   guestbook: Megaphone,
   login: KeyRound,
   booking: CalendarDays,
+  relay: ShieldCheck,
 };
 
 const EXAMPLE_EVENTS: ChronosEvent[] = [
-  { id: "ex-1", kind: "guestbook", title: "Nieuwe prikbord-aanvraag ontvangen", detail: "Verschijnt hier zodra iemand op je prikbord schrijft.", at: "" },
-  { id: "ex-2", kind: "question", title: "Anonieme Q&A binnengekomen", detail: "Vragen via je profielhub komen hier binnen.", at: "" },
-  { id: "ex-3", kind: "login", title: "Nieuwe login gedetecteerd bij App X", detail: "Elke “Login met ROUT” wordt hier gelogd.", at: "" },
+  { id: "ex-1", kind: "contact", title: "Inkomend contactbericht via hub", detail: "Berichten via het contactblok op je hub verschijnen hier.", at: "" },
+  { id: "ex-2", kind: "question", title: "Anonieme Q&A ontvangen", detail: "Vragen die bezoekers anoniem stellen.", at: "" },
+  { id: "ex-3", kind: "login", title: "Login gedetecteerd bij app X", detail: "Elke “Login met ROUT” wordt hier gelogd.", at: "" },
+  { id: "ex-4", kind: "guestbook", title: "Prikbord verzoek in de wachtrij", detail: "Nieuwe prikbordberichten wachten op je goedkeuring.", at: "" },
 ];
 
 const rtf = new Intl.RelativeTimeFormat("nl-BE", { numeric: "auto" });
 function relative(at: string): string {
-  if (!at) return "Voorbeeld";
   const diff = (new Date(at).getTime() - Date.now()) / 1000;
   const abs = Math.abs(diff);
   if (abs < 60) return rtf.format(Math.round(diff), "second");
@@ -66,17 +59,6 @@ function relative(at: string): string {
 }
 
 const fmt = (n: number | null | undefined) => (n == null ? "—" : String(n));
-
-function Sparkline({ data }: { data: number[] }) {
-  const max = Math.max(1, ...data);
-  return (
-    <div className="flex h-14 items-end gap-1" role="img" aria-label="Scans van de laatste 14 dagen">
-      {data.map((v, i) => (
-        <span key={i} className="flex-1 rounded-sm bg-accent" style={{ height: `${Math.max(6, (v / max) * 100)}%` }} />
-      ))}
-    </div>
-  );
-}
 
 function Widget({
   to,
@@ -95,17 +77,23 @@ function Widget({
   className?: string;
   children?: ReactNode;
 }) {
-  const body = (
+  const head = (
+    <div className="flex items-center justify-between gap-2">
+      <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+        <Icon className="h-3.5 w-3.5" aria-hidden /> {eyebrow}
+      </span>
+      {to ? (
+        <ArrowUpRight
+          className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          aria-hidden
+        />
+      ) : null}
+    </div>
+  );
+  const text = (
     <>
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-          <Icon className="h-3.5 w-3.5" aria-hidden /> {eyebrow}
-        </span>
-        {to ? <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden /> : null}
-      </div>
       <div className="mt-4 font-display text-2xl leading-tight text-foreground sm:text-[28px]">{title}</div>
       {hint ? <p className="mt-1.5 text-sm text-muted-foreground">{hint}</p> : null}
-      {children ? <div className="mt-4">{children}</div> : null}
     </>
   );
   const cls = cn(
@@ -113,12 +101,30 @@ function Widget({
     to && "hover:border-border-ink",
     className,
   );
-  return to ? (
-    <Link to={to} className={cls}>
-      {body}
-    </Link>
-  ) : (
-    <section className={cls}>{body}</section>
+  // Interactive children (switches, inputs) must never sit inside a link.
+  if (to && !children) {
+    return (
+      <Link to={to} className={cls}>
+        {head}
+        {text}
+      </Link>
+    );
+  }
+  return (
+    <section className={cls}>
+      {to ? (
+        <Link to={to} className="block">
+          {head}
+          {text}
+        </Link>
+      ) : (
+        <>
+          {head}
+          {text}
+        </>
+      )}
+      {children ? <div className="mt-4">{children}</div> : null}
+    </section>
   );
 }
 
@@ -150,10 +156,55 @@ function QuickQr() {
   );
 }
 
+function RelayWidget({ userId, connectedApps }: { userId: string; connectedApps: number | null }) {
+  const store = useRelayStore(userId);
+  const relays = store.relays ?? [];
+  const active = relays.filter((r) => r.status === "active").length;
+  return (
+    <Widget
+      to="/dashboard/identity"
+      icon={Fingerprint}
+      eyebrow="Identity Relays"
+      title={`${active} actieve relay${active === 1 ? "" : "s"}`}
+      hint={`${fmt(connectedApps)} gekoppelde apps · apps zien alleen je ROUT-alias`}
+      className="sm:col-span-2"
+    >
+      {store.relays === null ? (
+        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-label="Relays laden" />
+      ) : !relays.length ? (
+        <p className="rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
+          Nog geen relays. Schakel per gekoppelde app een privé-relay in via Identity.
+        </p>
+      ) : (
+        <ul className="divide-y divide-border rounded-xl border border-border">
+          {relays.slice(0, 4).map((r) => (
+            <li key={r.id} className="flex items-center gap-3 px-3 py-2.5">
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium">{r.appName}</span>
+                <span className="block truncate font-mono text-[11px] text-muted-foreground">{r.proxyEmail}</span>
+              </span>
+              <Switch
+                checked={r.status === "active"}
+                onCheckedChange={() => void store.toggle(r)}
+                aria-label={`Relay voor ${r.appName} ${r.status === "active" ? "pauzeren" : "hervatten"}`}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+      {store.pending > 0 ? (
+        <p className="mt-2 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Loader2 className="h-3 w-3 animate-spin" /> {store.pending} wijziging(en) synchroniseren…
+        </p>
+      ) : null}
+    </Widget>
+  );
+}
+
 function ChronosStream({ events, syncing }: { events: ChronosEvent[]; syncing: boolean }) {
   const shown = events.length ? events : EXAMPLE_EVENTS;
   return (
-    <aside className="min-w-0 rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20" aria-label="Chronos Stream">
+    <aside className="min-w-0 rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto" aria-label="Chronos Stream">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Chronos Stream</h2>
         {syncing ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Synchroniseren" /> : null}
@@ -193,19 +244,13 @@ function ChronosStream({ events, syncing }: { events: ChronosEvent[]; syncing: b
 /**
  * /dashboard — the Command Center cockpit. Left: bento control grid; right:
  * the Chronos event stream. State is local-first: the last snapshot paints
- * instantly from IndexedDB and is revalidated in the background.
+ * instantly from IndexedDB, mutations apply at 0 ms and sync in the background.
+ * QR statistics live in /dashboard/assets.
  */
 export function CommandCenter() {
   const { user } = useAuth();
-  const loadOverview = useServerFn(getDashboardOverview);
   const loadCenter = useServerFn(getCommandCenter);
-  const state = useLocalFirst<CockpitState>(user ? `cockpit:${user.id}` : null, async () => {
-    const [overview, center] = await Promise.all([
-      loadOverview().catch(() => null),
-      loadCenter().catch(() => null),
-    ]);
-    return { overview, center };
-  });
+  const state = useLocalFirst<CommandCenterData>(user ? `cockpit:${user.id}` : null, () => loadCenter());
 
   if (!user || (!state.data && state.syncing)) {
     return (
@@ -219,10 +264,8 @@ export function CommandCenter() {
     );
   }
 
-  const o = state.data?.overview ?? null;
-  const c = state.data?.center ?? null;
+  const c = state.data;
   const inboxCount = c ? (c.unreadNotifications ?? 0) + (c.openQuestions ?? 0) : null;
-  const trend = o?.trend ?? [];
 
   return (
     <AppLayout
@@ -237,7 +280,7 @@ export function CommandCenter() {
           </Button>
           <Button asChild size="sm" variant="outline" className="gap-1.5">
             <Link to="/dashboard/assets">
-              <BarChart3 className="h-4 w-4" /> Assets
+              <BarChart3 className="h-4 w-4" /> Assets &amp; statistieken
             </Link>
           </Button>
           <Button asChild size="sm" className="gap-1.5">
@@ -248,30 +291,20 @@ export function CommandCenter() {
         </div>
       }
     >
+      {state.error && !c ? (
+        <p className="mb-4 rounded-xl border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+          De cockpit kon niet synchroniseren. Probeer opnieuw met Sync.
+        </p>
+      ) : null}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="grid auto-rows-min gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <Widget
-            to="/dashboard/assets"
-            icon={BarChart3}
-            eyebrow="Quick Stats"
-            title={`${fmt(o?.scans)} scans`}
-            hint={`${fmt(o?.tracked)} dynamische links · ${fmt(o?.saved)} opgeslagen QR's`}
-            className="sm:col-span-2"
-          >
-            {trend.some((v) => v > 0) ? (
-              <Sparkline data={trend} />
-            ) : (
-              <p className="text-xs text-muted-foreground">Nog geen scans in de laatste 14 dagen.</p>
-            )}
-          </Widget>
+          <RelayWidget userId={user.id} connectedApps={c?.connectedApps ?? null} />
 
-          <Widget
-            to="/dashboard/identity"
-            icon={Fingerprint}
-            eyebrow="Identity Relays"
-            title={`${fmt(c?.connectedApps)} gekoppelde apps`}
-            hint={`${fmt(c?.activeRelays)} actieve privé-relays · beheer apps & e-mail aliassen`}
-          />
+          <Widget to="/studio" icon={LayoutTemplate} eyebrow="Profiel Hub" title="Hub beheren" hint="Blokken, thema en zichtbaarheid in de Studio." />
+
+          <Widget icon={QrCode} eyebrow="Snelle QR" title="Plak een link" hint="Direct naar de generator in de Studio.">
+            <QuickQr />
+          </Widget>
 
           <Widget
             to="/dashboard/assets"
@@ -296,12 +329,6 @@ export function CommandCenter() {
             title={`${fmt(c?.guestbook30d)} prikbord-berichten`}
             hint="Beheer je Mastodon/Bluesky feed op je hub (laatste 30 dagen)."
           />
-
-          <Widget to="/studio" icon={LayoutTemplate} eyebrow="Profiel Hub" title="Hub beheren" hint="Blokken, thema en zichtbaarheid in de Studio." />
-
-          <Widget icon={QrCode} eyebrow="Quick QR" title="Plak een link" className="sm:col-span-2 xl:col-span-1">
-            <QuickQr />
-          </Widget>
         </div>
 
         <ChronosStream events={c?.events ?? []} syncing={state.syncing} />

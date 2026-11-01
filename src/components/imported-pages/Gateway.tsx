@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ArrowRight,
   AtSign,
+  Braces,
+  Building2,
+  KeyRound,
   CornerDownLeft,
   Fingerprint,
   LayoutDashboard,
@@ -18,22 +21,37 @@ import { useReveal } from "@/hooks/useReveal";
 import { parseOmniInput, type OmniIntent } from "@/lib/omni-parser";
 import { cn } from "@/lib/utils";
 
-const PILLARS = [
+const ECOSYSTEM = [
   {
-    Icon: Fingerprint,
-    title: "Eén geverifieerde identiteit",
-    text: "Jouw handle, jouw regels. Geverifieerd, soeverein en gehost in de EU.",
+    Icon: KeyRound,
+    eyebrow: "Identiteit",
+    title: "Login met ROUT",
+    text: "OpenID Connect met pairwise identifiers, step-up met passkeys en privé-relays: apps krijgen alleen wat jij deelt.",
+    to: "/developer/identity-oauth",
+    cta: "Hoe Login met ROUT werkt",
   },
   {
-    Icon: QrCode,
-    title: "Dynamische routing",
-    text: "QR-codes en korte links die je achteraf kunt bijsturen, zonder herdruk.",
+    Icon: Building2,
+    eyebrow: "Samenwerken",
+    title: "Workspaces",
+    text: "Aparte omgevingen met eigen profielhub, QR-codes, domeinen, team-rollen en Developer Console.",
+    to: "/support/workspace/getting-started/what-is-a-workspace",
+    cta: "Ontdek workspaces",
   },
   {
-    Icon: ShieldCheck,
-    title: "Privacy by design",
-    text: "Geen trackers, geen datahandel. Open source (AGPLv3) en zelf te hosten.",
+    Icon: Braces,
+    eyebrow: "Bouwen",
+    title: "API & Developers",
+    text: "Dynamische links, QR-assets en identiteit via een open API — gehost in de EU, open source (AGPLv3).",
+    to: "/developers",
+    cta: "Naar de Developer Hub",
   },
+] as const;
+
+const PRINCIPLES = [
+  { Icon: Fingerprint, text: "Eén geverifieerde identiteit" },
+  { Icon: QrCode, text: "Dynamische routing zonder herdruk" },
+  { Icon: ShieldCheck, text: "Geen trackers, geen datahandel" },
 ] as const;
 
 const SUGGESTIONS = ["https://", "@handle", "/studio", "/dashboard"] as const;
@@ -86,13 +104,15 @@ export default function Gateway() {
   };
 
   return (
-    <AppLayout width="full" revealFooter>
-      <section className="dark omni-stage bg-background text-foreground">
+    <AppLayout width="full" revealFooter tone="obsidian">
+      <section className="omni-stage">
         <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-3xl flex-col items-center justify-center px-4 py-16 text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Sovereign Digital Node</p>
-          <h1 className="mt-5 font-display text-4xl leading-[1.05] sm:text-6xl">Wat wil je routeren?</h1>
+          <h1 className="mt-5 font-display text-4xl leading-[1.05] sm:text-6xl">
+            Sovereign Digital Identity &amp; Routing Infrastructure
+          </h1>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Sovereign Digital Identity &amp; Routing Infrastructure — Europees, open source, zonder trackers.
+            Plak een URL, typ een @handle of een commando — Europees, open source, zonder trackers.
           </p>
 
           <form
@@ -111,7 +131,7 @@ export default function Gateway() {
                 id="omni-input"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Voer een URL, commando of @handle in"
+                placeholder="Wat wil je routeren?"
                 autoComplete="off"
                 autoCapitalize="none"
                 spellCheck={false}
@@ -177,13 +197,30 @@ export default function Gateway() {
           </p>
         </Reveal>
 
-        <Reveal className="mt-12 grid gap-4 sm:grid-cols-3">
-          {PILLARS.map(({ Icon, title, text }) => (
-            <article key={title} className="rounded-2xl border border-border bg-card p-5">
-              <Icon className="h-5 w-5 text-foreground" aria-hidden />
-              <h3 className="mt-3 text-sm font-medium text-foreground">{title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{text}</p>
-            </article>
+        <Reveal className="mt-12 grid gap-4 md:grid-cols-3">
+          {ECOSYSTEM.map(({ Icon, eyebrow, title, text, to, cta }) => (
+            <Link
+              key={title}
+              to={to}
+              className="group flex flex-col rounded-2xl border border-border bg-card p-6 transition-colors hover:border-border-ink"
+            >
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <Icon className="h-3.5 w-3.5" aria-hidden /> {eyebrow}
+              </span>
+              <h3 className="mt-4 font-display text-2xl text-foreground">{title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              <span className="mt-5 inline-flex items-center gap-1.5 text-sm text-foreground">
+                {cta} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </Link>
+          ))}
+        </Reveal>
+
+        <Reveal className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
+          {PRINCIPLES.map(({ Icon, text }) => (
+            <span key={text} className="inline-flex items-center gap-2">
+              <Icon className="h-4 w-4 text-foreground" aria-hidden /> {text}
+            </span>
           ))}
         </Reveal>
 

@@ -22,3 +22,7 @@
 - [x] tsgo exit 0 + tests
 - [x] Short-link resolver: isolate edge cache (15 s) with a KV-ready store interface
 - [ ] Account-merge SQL function (db/0152, still pending review) does not move identity_relays yet — needs regeneration when 0152 is applied
+- [x] Identity relays are the primary model: relay registry kept in lockstep with forwarding rules, targets self-heal on email change, push protocol is the fallback
+- [x] Local-first outbox for relay pause/resume (0 ms UI, persisted queue, background flush)
+- [x] Obsidian gateway with ecosystem section (Login met ROUT, Workspaces, API); custom-domain profile lazy-loaded out of the gateway bundle
+- [x] Cockpit without QR statistics (moved to /dashboard/assets); Chronos stream adds hub contact messages and relay mail

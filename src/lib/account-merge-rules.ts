@@ -87,6 +87,7 @@ export const MERGE_TABLES: Readonly<Record<string, MergeTableRule>> = {
   oauth_consents: r("dedupe_keep_primary", ["X.client_id"]),
   oauth_email_forwarding_rules: r("dedupe_keep_primary", ["X.client_id"]),
   identity_relays: r("dedupe_keep_primary", ["X.connected_app_id"]),
+  identity_relay_merge_archive: r("reassign"),
   reserved_brand_releases: r("dedupe_keep_primary", ["X.term"]),
   social_follow_links: r("dedupe_keep_primary", ["X.network", "X.remote_actor", "X.direction"]),
   user_badges: r("dedupe_keep_primary", ["X.badge_id"]),

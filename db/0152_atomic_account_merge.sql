@@ -217,6 +217,7 @@ declare
  v_s_auth uuid;
  v_p_design jsonb;
  v_s_design jsonb;
+ v_relays_archived integer := 0;
 begin
  if (session_user <> 'rout_app' and current_setting('role',true) <> 'rout_app') or v_secondary is null then
    raise exception 'merge_caller_forbidden' using errcode='42501';
@@ -311,6 +312,26 @@ begin
  update public."oauth_consents" set "user_id" = v_primary where "user_id" = v_secondary;
  delete from public."oauth_email_forwarding_rules" s where s."user_id" = v_secondary and exists (select 1 from public."oauth_email_forwarding_rules" p where p."user_id" = v_primary and p.client_id = s.client_id);
  update public."oauth_email_forwarding_rules" set "user_id" = v_primary where "user_id" = v_secondary;
+ -- Identity relays (0157/0158): the primary's relay wins per connected app. A secondary
+ -- duplicate is archived for the primary, then removed; its forwarding rule was
+ -- deduplicated above, so the archived proxy no longer forwards. Moved relays follow
+ -- the primary address. Late-bound: tables come from 0157/0158.
+ insert into public.identity_relay_merge_archive(user_id,merged_from_user_id,connected_app_id,proxy_email,target_email,status,relay_created_at)
+ select v_primary,s.user_id,s.connected_app_id,s.proxy_email,s.target_email,s.status,s.created_at
+ from public.identity_relays s where s.user_id = v_secondary and exists (select 1 from public.identity_relays p where p.user_id = v_primary and p.connected_app_id = s.connected_app_id);
+ get diagnostics v_relays_archived = row_count;
+ delete from public.identity_relays s where s.user_id = v_secondary and exists (select 1 from public.identity_relays p where p.user_id = v_primary and p.connected_app_id = s.connected_app_id);
+ update public.identity_relays set user_id = v_primary,
+   target_email = coalesce((select lower(u.email) from public.users u where u.id = v_primary and position('@' in coalesce(u.email,'')) > 1), target_email),
+   updated_at = now()
+ where user_id = v_secondary;
+ update public.identity_relay_merge_archive set user_id = v_primary where user_id = v_secondary;
+ if v_relays_archived > 0 then
+   insert into public.notifications(user_id,kind,title,body,severity,details)
+   values(v_primary,'account.merge.relays_archived','Dubbele relays gearchiveerd',
+     format('%s privé-relay(s) van je samengevoegde account bestonden al voor dezelfde app. Je bestaande relay blijft actief; de dubbele is gearchiveerd en stuurt geen mail meer door.', v_relays_archived),
+     'warning',jsonb_build_object('count',v_relays_archived));
+ end if;
  delete from public."pro_waitlist" s where s."user_id" = v_secondary and exists (select 1 from public."pro_waitlist" p where p."user_id" = v_primary);
  update public."pro_waitlist" set "user_id" = v_primary where "user_id" = v_secondary;
  delete from public."profile_ingest_tokens" s where s."user_id" = v_secondary and exists (select 1 from public."profile_ingest_tokens" p where p."user_id" = v_primary);
@@ -424,7 +445,11 @@ begin
 end $merge$;
 -- No runtime membership; privileges are available only inside this fixed function.
 grant create on schema public to rout_merge_executor;
+-- PostgreSQL 16+: transferring ownership needs SET on the target role. Grant it to
+-- the migrating role only for this statement (no inheritance), then withdraw it.
+do $own$ begin execute format('grant rout_merge_executor to %I with inherit false, set true', current_user); end $own$;
 alter function public.execute_account_merge(text,text,text,text) owner to rout_merge_executor;
+do $own$ begin execute format('revoke rout_merge_executor from %I', current_user); end $own$;
 revoke create on schema public from rout_merge_executor;
 revoke all on function public.execute_account_merge(text,text,text,text) from public;
 grant execute on function public.execute_account_merge(text,text,text,text) to rout_app;

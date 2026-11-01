@@ -21,8 +21,11 @@
 - [x] Local-first snapshot cache for dashboard state
 - [x] tsgo exit 0 + tests
 - [x] Short-link resolver: isolate edge cache (15 s) with a KV-ready store interface
-- [ ] Account-merge SQL function (db/0152, still pending review) does not move identity_relays yet — needs regeneration when 0152 is applied
+- [x] Account merge (0150–0152 + 0158 applied): relays move to the primary, same-app duplicates archived with a warning
 - [x] Identity relays are the primary model: relay registry kept in lockstep with forwarding rules, targets self-heal on email change, push protocol is the fallback
 - [x] Local-first outbox for relay pause/resume (0 ms UI, persisted queue, background flush)
 - [x] Obsidian gateway with ecosystem section (Login met ROUT, Workspaces, API); custom-domain profile lazy-loaded out of the gateway bundle
 - [x] Cockpit without QR statistics (moved to /dashboard/assets); Chronos stream adds hub contact messages and relay mail
+- [x] rout_app least privilege (0158) verified live: read/write OK; truncate/create/drop/alter/temp refused
+- [x] GEO: Organization + Person (founder) + SoftwareApplication (ROUT OS, AGPLv3) + SoftwareSourceCode in the head of /
+- [ ] Switch the Neon connection login from the owner to rout_app (needs the rout_app password from the Neon console)

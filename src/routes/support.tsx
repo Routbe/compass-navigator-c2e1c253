@@ -1,0 +1,2 @@
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+export const Route = createFileRoute("/support")({ head: () => ({ meta: [{"title": "ROUT support"}, {"name": "description", "content": "Explore support for ROUT QR codes, links and profiles."}, {"property": "og:title", "content": "ROUT support"}, {"property": "og:description", "content": "Explore support for ROUT QR codes, links and profiles."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary_large_image"}] }), component: Outlet });

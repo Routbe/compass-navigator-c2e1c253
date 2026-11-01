@@ -36,3 +36,12 @@
 - [x] Sitewide knowledge graph in __root (Organization, founder, ROUT OS, source code), keywords meta
 - [x] Title convention `PageName | ROUT - Sovereign Digital Identity OS` on every ROUT page
 - [x] "What is ROUT?" section on /manifesto (4 languages)
+
+## Trust, age gating & go-live (Nov 2026)
+- [ ] North star metric → Login met ROUT bij externe apps per week
+- [ ] Neon connection login: check whether it is rout_app
+- [ ] Sign-up: required terms/privacy/16+ checkbox; implicit notice above social buttons
+- [ ] Remove birth-date fields (vCard block, verification requirement, birthdate dialog); drop user_birthdates after confirmation
+- [ ] user_verified_claims table (rout_app least privilege) + Sovereign Trust widget on /dashboard/identity
+- [ ] OIDC scopes verify_human / verify_18_plus prepared (boolean claims)
+- [ ] Final check: tsgo, tests, dead links / missing imports on critical paths, production readiness

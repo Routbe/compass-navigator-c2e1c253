@@ -2,8 +2,8 @@
 
 # Leidster
 
-Het publiek van leden komt precies terecht waar leden hen naartoe willen sturen.
+Gebruikers hebben volledige, soevereine controle over hun digitale identiteit, inkomende data-stromen en externe authenticaties.
 
 ## Maatstaf
 
-QR-scans en geopende korte links die hun bestemming bereiken, per week
+Het aantal actieve Identity Relays, succesvolle Login met ROUT-sessies, en opgezette Profiel Hubs per week.

@@ -445,7 +445,11 @@ begin
 end $merge$;
 -- No runtime membership; privileges are available only inside this fixed function.
 grant create on schema public to rout_merge_executor;
+-- PostgreSQL 16+: transferring ownership needs SET on the target role. Grant it to
+-- the migrating role only for this statement (no inheritance), then withdraw it.
+do $own$ begin execute format('grant rout_merge_executor to %I with inherit false, set true', current_user); end $own$;
 alter function public.execute_account_merge(text,text,text,text) owner to rout_merge_executor;
+do $own$ begin execute format('revoke rout_merge_executor from %I', current_user); end $own$;
 revoke create on schema public from rout_merge_executor;
 revoke all on function public.execute_account_merge(text,text,text,text) from public;
 grant execute on function public.execute_account_merge(text,text,text,text) to rout_app;

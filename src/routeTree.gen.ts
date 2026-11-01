@@ -192,9 +192,13 @@ import { Route as AuthenticatedConsoleAppsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedConsoleBillingRouteImport } from './routes/_authenticated/console.billing'
 import { Route as AuthenticatedConsoleConnectorsRouteImport } from './routes/_authenticated/console.connectors'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedDashboardAssetsRouteImport } from './routes/_authenticated/dashboard.assets'
 import { Route as AuthenticatedDashboardBlueskyRouteImport } from './routes/_authenticated/dashboard.bluesky'
 import { Route as AuthenticatedDashboardDomainsRouteImport } from './routes/_authenticated/dashboard.domains'
+import { Route as AuthenticatedDashboardIdentityRouteImport } from './routes/_authenticated/dashboard.identity'
+import { Route as AuthenticatedDashboardLinksRouteImport } from './routes/_authenticated/dashboard.links'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
+import { Route as AuthenticatedDashboardQrRouteImport } from './routes/_authenticated/dashboard.qr'
 import { Route as AuthenticatedDashboardRoutesRouteImport } from './routes/_authenticated/dashboard.routes'
 import { Route as AuthenticatedStudioAccountRouteImport } from './routes/_authenticated/studio_.account'
 import { Route as AuthenticatedStudioBookingRouteImport } from './routes/_authenticated/studio_.booking'
@@ -1270,6 +1274,12 @@ const AuthenticatedDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDashboardAssetsRoute =
+  AuthenticatedDashboardAssetsRouteImport.update({
+    id: '/dashboard/assets',
+    path: '/dashboard/assets',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardBlueskyRoute =
   AuthenticatedDashboardBlueskyRouteImport.update({
     id: '/dashboard/bluesky',
@@ -1282,10 +1292,28 @@ const AuthenticatedDashboardDomainsRoute =
     path: '/dashboard/domains',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDashboardIdentityRoute =
+  AuthenticatedDashboardIdentityRouteImport.update({
+    id: '/dashboard/identity',
+    path: '/dashboard/identity',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardLinksRoute =
+  AuthenticatedDashboardLinksRouteImport.update({
+    id: '/dashboard/links',
+    path: '/dashboard/links',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardProfileRoute =
   AuthenticatedDashboardProfileRouteImport.update({
     id: '/dashboard/profile',
     path: '/dashboard/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardQrRoute =
+  AuthenticatedDashboardQrRouteImport.update({
+    id: '/dashboard/qr',
+    path: '/dashboard/qr',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardRoutesRoute =
@@ -2245,9 +2273,13 @@ export interface FileRoutesByFullPath {
   '/console/apps': typeof AuthenticatedConsoleAppsRouteWithChildren
   '/console/billing': typeof AuthenticatedConsoleBillingRoute
   '/console/connectors': typeof AuthenticatedConsoleConnectorsRoute
+  '/dashboard/assets': typeof AuthenticatedDashboardAssetsRoute
   '/dashboard/bluesky': typeof AuthenticatedDashboardBlueskyRoute
   '/dashboard/domains': typeof AuthenticatedDashboardDomainsRoute
+  '/dashboard/identity': typeof AuthenticatedDashboardIdentityRoute
+  '/dashboard/links': typeof AuthenticatedDashboardLinksRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/qr': typeof AuthenticatedDashboardQrRoute
   '/dashboard/routes': typeof AuthenticatedDashboardRoutesRoute
   '/studio/account': typeof AuthenticatedStudioAccountRoute
   '/studio/booking': typeof AuthenticatedStudioBookingRoute
@@ -2556,9 +2588,13 @@ export interface FileRoutesByTo {
   '/console/api': typeof AuthenticatedConsoleApiRoute
   '/console/billing': typeof AuthenticatedConsoleBillingRoute
   '/console/connectors': typeof AuthenticatedConsoleConnectorsRoute
+  '/dashboard/assets': typeof AuthenticatedDashboardAssetsRoute
   '/dashboard/bluesky': typeof AuthenticatedDashboardBlueskyRoute
   '/dashboard/domains': typeof AuthenticatedDashboardDomainsRoute
+  '/dashboard/identity': typeof AuthenticatedDashboardIdentityRoute
+  '/dashboard/links': typeof AuthenticatedDashboardLinksRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/qr': typeof AuthenticatedDashboardQrRoute
   '/dashboard/routes': typeof AuthenticatedDashboardRoutesRoute
   '/studio/account': typeof AuthenticatedStudioAccountRoute
   '/studio/booking': typeof AuthenticatedStudioBookingRoute
@@ -2884,9 +2920,13 @@ export interface FileRoutesById {
   '/_authenticated/console/apps': typeof AuthenticatedConsoleAppsRouteWithChildren
   '/_authenticated/console/billing': typeof AuthenticatedConsoleBillingRoute
   '/_authenticated/console/connectors': typeof AuthenticatedConsoleConnectorsRoute
+  '/_authenticated/dashboard/assets': typeof AuthenticatedDashboardAssetsRoute
   '/_authenticated/dashboard/bluesky': typeof AuthenticatedDashboardBlueskyRoute
   '/_authenticated/dashboard/domains': typeof AuthenticatedDashboardDomainsRoute
+  '/_authenticated/dashboard/identity': typeof AuthenticatedDashboardIdentityRoute
+  '/_authenticated/dashboard/links': typeof AuthenticatedDashboardLinksRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/qr': typeof AuthenticatedDashboardQrRoute
   '/_authenticated/dashboard/routes': typeof AuthenticatedDashboardRoutesRoute
   '/_authenticated/studio_/account': typeof AuthenticatedStudioAccountRoute
   '/_authenticated/studio_/booking': typeof AuthenticatedStudioBookingRoute
@@ -3213,9 +3253,13 @@ export interface FileRouteTypes {
     | '/console/apps'
     | '/console/billing'
     | '/console/connectors'
+    | '/dashboard/assets'
     | '/dashboard/bluesky'
     | '/dashboard/domains'
+    | '/dashboard/identity'
+    | '/dashboard/links'
     | '/dashboard/profile'
+    | '/dashboard/qr'
     | '/dashboard/routes'
     | '/studio/account'
     | '/studio/booking'
@@ -3524,9 +3568,13 @@ export interface FileRouteTypes {
     | '/console/api'
     | '/console/billing'
     | '/console/connectors'
+    | '/dashboard/assets'
     | '/dashboard/bluesky'
     | '/dashboard/domains'
+    | '/dashboard/identity'
+    | '/dashboard/links'
     | '/dashboard/profile'
+    | '/dashboard/qr'
     | '/dashboard/routes'
     | '/studio/account'
     | '/studio/booking'
@@ -3851,9 +3899,13 @@ export interface FileRouteTypes {
     | '/_authenticated/console/apps'
     | '/_authenticated/console/billing'
     | '/_authenticated/console/connectors'
+    | '/_authenticated/dashboard/assets'
     | '/_authenticated/dashboard/bluesky'
     | '/_authenticated/dashboard/domains'
+    | '/_authenticated/dashboard/identity'
+    | '/_authenticated/dashboard/links'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/qr'
     | '/_authenticated/dashboard/routes'
     | '/_authenticated/studio_/account'
     | '/_authenticated/studio_/booking'
@@ -5451,6 +5503,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/assets': {
+      id: '/_authenticated/dashboard/assets'
+      path: '/dashboard/assets'
+      fullPath: '/dashboard/assets'
+      preLoaderRoute: typeof AuthenticatedDashboardAssetsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard/bluesky': {
       id: '/_authenticated/dashboard/bluesky'
       path: '/dashboard/bluesky'
@@ -5465,11 +5524,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardDomainsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/identity': {
+      id: '/_authenticated/dashboard/identity'
+      path: '/dashboard/identity'
+      fullPath: '/dashboard/identity'
+      preLoaderRoute: typeof AuthenticatedDashboardIdentityRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/links': {
+      id: '/_authenticated/dashboard/links'
+      path: '/dashboard/links'
+      fullPath: '/dashboard/links'
+      preLoaderRoute: typeof AuthenticatedDashboardLinksRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard/profile': {
       id: '/_authenticated/dashboard/profile'
       path: '/dashboard/profile'
       fullPath: '/dashboard/profile'
       preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/qr': {
+      id: '/_authenticated/dashboard/qr'
+      path: '/dashboard/qr'
+      fullPath: '/dashboard/qr'
+      preLoaderRoute: typeof AuthenticatedDashboardQrRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/routes': {
@@ -6591,9 +6671,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDomainsRoute: typeof AuthenticatedDomainsRoute
   AuthenticatedMyDataRoute: typeof AuthenticatedMyDataRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedDashboardAssetsRoute: typeof AuthenticatedDashboardAssetsRoute
   AuthenticatedDashboardBlueskyRoute: typeof AuthenticatedDashboardBlueskyRoute
   AuthenticatedDashboardDomainsRoute: typeof AuthenticatedDashboardDomainsRoute
+  AuthenticatedDashboardIdentityRoute: typeof AuthenticatedDashboardIdentityRoute
+  AuthenticatedDashboardLinksRoute: typeof AuthenticatedDashboardLinksRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardQrRoute: typeof AuthenticatedDashboardQrRoute
   AuthenticatedDashboardRoutesRoute: typeof AuthenticatedDashboardRoutesRoute
   AuthenticatedStudioAccountRoute: typeof AuthenticatedStudioAccountRoute
   AuthenticatedStudioBookingRoute: typeof AuthenticatedStudioBookingRoute
@@ -6611,9 +6695,13 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDomainsRoute: AuthenticatedDomainsRoute,
   AuthenticatedMyDataRoute: AuthenticatedMyDataRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedDashboardAssetsRoute: AuthenticatedDashboardAssetsRoute,
   AuthenticatedDashboardBlueskyRoute: AuthenticatedDashboardBlueskyRoute,
   AuthenticatedDashboardDomainsRoute: AuthenticatedDashboardDomainsRoute,
+  AuthenticatedDashboardIdentityRoute: AuthenticatedDashboardIdentityRoute,
+  AuthenticatedDashboardLinksRoute: AuthenticatedDashboardLinksRoute,
   AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+  AuthenticatedDashboardQrRoute: AuthenticatedDashboardQrRoute,
   AuthenticatedDashboardRoutesRoute: AuthenticatedDashboardRoutesRoute,
   AuthenticatedStudioAccountRoute: AuthenticatedStudioAccountRoute,
   AuthenticatedStudioBookingRoute: AuthenticatedStudioBookingRoute,

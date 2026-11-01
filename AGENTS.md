@@ -28,3 +28,5 @@
 - Omni-Bar routing rules live in the pure `src/lib/omni-parser.ts` (tested); only http(s) URLs reach the Studio generator. Why: one parser for hint and submit, no unsafe schemes.
 - Cockpit state is local-first via `useLocalFirst` + IndexedDB snapshots keyed by user id and cleared on sign-out. Why: instant paint without leaving private data on shared devices.
 - Short-link resolves use the isolate cache in `src/lib/edge-link-cache.ts` (15 s TTL, `LinkCacheStore` seam for a shared KV). Why: repeat scans skip database lookups while repoints still apply within seconds.
+- `identity_relays` is the relay registry; `ensureForwardingAddress` writes it and `oauth_email_forwarding_rules` stays the delivery authority, changed together in `identity-relays.server.ts`. Why: apps see only the proxy and the target follows the primary address, so email changes need no push.
+- Optimistic mutations go through the persisted outbox (`src/lib/local-first/outbox.ts`, last write per relay wins; network errors retry, rejections roll back via refetch). Why: 0 ms UI without losing changes offline.

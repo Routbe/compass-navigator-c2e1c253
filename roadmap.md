@@ -12,11 +12,13 @@
 
 ## Sovereign OS refactor (Nov 2026)
 - [x] Link Neon database connection
-- [ ] `/` Omni-Bar gateway: smart parser (URL → Studio QR, @handle, commands), below-the-fold reveal
-- [ ] Signed-in visitors on `/` redirected server-side to `/dashboard` (not on custom-domain profiles)
-- [ ] `/dashboard` cockpit: bento widgets left + Chronos event stream right
-- [ ] Old dashboard content moved to `/dashboard/assets`, `/dashboard/qr`, `/dashboard/links`
-- [ ] `/dashboard/identity`: connected apps + primary-email change with per-app push selection
-- [ ] `identity_relays` table (migration + schema)
-- [ ] Local-first snapshot cache for dashboard state
-- [ ] tsgo exit 0 + tests
+- [x] `/` Omni-Bar gateway: smart parser (URL → Studio QR, @handle, commands), below-the-fold reveal
+- [x] Signed-in visitors on `/` redirected server-side to `/dashboard` (not on custom-domain profiles)
+- [x] `/dashboard` cockpit: bento widgets left + Chronos event stream right
+- [x] Old dashboard content moved to `/dashboard/assets`, `/dashboard/qr`, `/dashboard/links`
+- [x] `/dashboard/identity`: connected apps + primary-email change with per-app push selection
+- [x] `identity_relays` table (migration + schema)
+- [x] Local-first snapshot cache for dashboard state
+- [x] tsgo exit 0 + tests
+- [x] Short-link resolver: isolate edge cache (15 s) with a KV-ready store interface
+- [ ] Account-merge SQL function (db/0152, still pending review) does not move identity_relays yet — needs regeneration when 0152 is applied

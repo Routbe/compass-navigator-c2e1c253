@@ -9,3 +9,9 @@ Source: https://github.com/Routbe/compass-navigator-7594fa3d.git at e86a7da68c65
 - TypeScript validation passed using the original repository configuration; 27 routing, QR, documentation and contact triage tests passed.
 - Accounts, dynamic links, profiles, payments, email, remote storage and exhaustive route coverage are not verified: original database connection and service secrets are absent. No imported SQL scripts were applied; no account mutations performed. Lovable Cloud is connected but the imported account system remains Better Auth.
 - Main menu links preserved from repository. Nested documentation navigation, all QR input types, every secondary popup, and source motion were not exhaustively replayed. No video/canvas static fallback was introduced.
+
+## Import 2026-11-01 from https://github.com/Routbe/compass-navigator-61442882.git
+- Full source copied (excluding .git, .env and the source project's backend config). Owner permission confirmed.
+- Typecheck passes (one Link search-param fix in studio_.workspaces.new.tsx); 252 test files / 1422 tests pass.
+- desktop + phone: /, /qr, /auth/sign-in return 200 with no page errors. Evidence: /tmp/browser/repo/desktop.png, phone.png.
+- Blocked: accounts, database, payments, email and storage need the original DATABASE_URL and service secrets.

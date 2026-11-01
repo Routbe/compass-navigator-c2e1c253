@@ -89,7 +89,9 @@ function Sparkline({ data }: { data: number[] }) {
  * privacy-first aggregated analytics. No page builders live here (that's
  * /studio), which keeps this route light on mobile.
  */
-export default function Dashboard() {
+export type AssetsTab = "overview" | "qrs" | "links" | "files";
+
+export default function Dashboard({ initialTab = "overview" }: { initialTab?: AssetsTab } = {}) {
   const { locale, t } = useI18n();
   const { user, loading } = useAuth();
   const nav = useNavigate();
@@ -192,7 +194,7 @@ export default function Dashboard() {
     <AppLayout
       title={t("studio.dashboard.title")}
       description={t("studio.dashboard.description")}
-      crumbs={[{ label: t("studio.dashboard.title") }]}
+      crumbs={[{ label: "Command Center", to: "/dashboard" }, { label: "Assets" }]}
       actions={
         <>
           <div className="hidden flex-wrap gap-2 sm:flex">
@@ -232,7 +234,7 @@ export default function Dashboard() {
       <IdentityCard />
       <DocHelpLink to="/features/link-management">Lees over link aliassen</DocHelpLink>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue={initialTab} className="space-y-4">
         <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4">
           <TabsTrigger value="overview" data-tour="dashboard-overview">{t("studio.dashboard.overview")}</TabsTrigger>
           <TabsTrigger value="qrs" data-tour="dashboard-qrs">{t("studio.dashboard.qrs")}</TabsTrigger>

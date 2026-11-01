@@ -302,6 +302,12 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
           setBlocks(Array.isArray(data.blocks) ? (data.blocks as unknown as ProfileBlock[]) : []);
           setDraftRevision(data.draftRevision ?? 0);
           setPublishedRevision(data.publishedRevision ?? 0);
+        } else if (alias) {
+          // The Privacy Alias starts blank: never seed it with the account's
+          // real name, email or avatar — that would link it to the member.
+          setHandle("");
+          setDisplayName("");
+          setAvatarUrl("");
         } else {
           const wanted = (user.user_metadata?.desired_handle as string | undefined) ?? "";
           setHandle(normalizeHandle(wanted || user.email?.split("@")[0] || ""));
@@ -311,7 +317,7 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
         // Weergavevoorkeuren komen uit de database; lokale legacy-waarden
         // dienen alleen nog als terugval voor wie nog niet opnieuw opsloeg.
         let loadedPrefs = parseDisplayPrefs(data?.displayPrefs ?? null);
-        if (!data?.displayPrefs || Object.keys(data.displayPrefs).length === 0) {
+        if (!alias && (!data?.displayPrefs || Object.keys(data.displayPrefs).length === 0)) {
           try {
             const raw = localStorage.getItem(`rout_studio_extra_${user.id}`);
             if (raw) loadedPrefs = parseDisplayPrefs({ ...loadedPrefs, ...JSON.parse(raw) });

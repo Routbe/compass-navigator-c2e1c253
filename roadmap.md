@@ -28,4 +28,11 @@
 - [x] Cockpit without QR statistics (moved to /dashboard/assets); Chronos stream adds hub contact messages and relay mail
 - [x] rout_app least privilege (0158) verified live: read/write OK; truncate/create/drop/alter/temp refused
 - [x] GEO: Organization + Person (founder) + SoftwareApplication (ROUT OS, AGPLv3) + SoftwareSourceCode in the head of /
-- [ ] Switch the Neon connection login from the owner to rout_app (needs the rout_app password from the Neon console)
+- [ ] Switch the Neon connection login from the owner to rout_app — the linked Neon connection still logs in as neondb_owner (checked 2 Nov); every app request already steps down to rout_app
+
+## Approval & GEO (Nov 2026)
+- [x] North star updated to the founder's wording
+- [x] 0153, 0155, 0156 applied; 96, 0149, 0154 registered (already live); nothing pending
+- [x] Sitewide knowledge graph in __root (Organization, founder, ROUT OS, source code), keywords meta
+- [x] Title convention `PageName | ROUT - Sovereign Digital Identity OS` on every ROUT page
+- [x] "What is ROUT?" section on /manifesto (4 languages)

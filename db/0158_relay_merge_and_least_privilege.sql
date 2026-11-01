@@ -63,4 +63,5 @@ begin
   -- database-level CREATE/TEMPORARY rights are withdrawn from the runtime.
   revoke create on schema public from public;
   execute format('revoke create, temporary on database %I from rout_app', current_database());
+  execute format('revoke temporary on database %I from public', current_database());
 end $$;

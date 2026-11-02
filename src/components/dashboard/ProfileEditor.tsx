@@ -108,7 +108,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { VERIFIED_STRUCTURE_MESSAGE } from "@/lib/verified-handle";
 import { strictHandleIssue, MSG_ALIAS_DIGITS, ALIAS_DIGITS_HINT } from "@/lib/handle-validation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";

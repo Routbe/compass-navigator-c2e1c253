@@ -101,7 +101,36 @@ const customDomainRootMiddleware = createMiddleware().server(async ({ request, n
   return next();
 });
 
+/**
+ * Headless Profile Hub: `/<handle>` and `/u/<alias>` answer JSON-LD to
+ * explicit JSON requests and user-triggered AI agents (lib/agent/content-negotiation.ts).
+ * Unknown handles fall through to the normal page.
+ */
+const machineProfileMiddleware = createMiddleware().server(async ({ request, next }) => {
+  if (request.method !== "GET" && request.method !== "HEAD") return next();
+  const { matchProfilePath, wantsMachineProfile } = await import("./lib/agent/content-negotiation");
+  const url = new URL(request.url);
+  const path = matchProfilePath(url.pathname);
+  if (!path || !wantsMachineProfile(request.headers.get("accept"), request.headers.get("user-agent"))) return next();
+  try {
+    const { machineProfile } = await import("./lib/agent/profile-json.server");
+    const body = await machineProfile(path, url.origin);
+    if (body) {
+      return new Response(JSON.stringify(body), {
+        headers: {
+          "content-type": "application/ld+json; charset=utf-8",
+          "cache-control": "public, max-age=60",
+          vary: "Accept, User-Agent",
+        },
+      });
+    }
+  } catch (error) {
+    console.warn("[machine-profile] fell back to HTML:", (error as Error)?.message);
+  }
+  return next();
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [],
-  requestMiddleware: [errorMiddleware, appModeMiddleware, customDomainRootMiddleware, securityHeadersMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, appModeMiddleware, customDomainRootMiddleware, machineProfileMiddleware, securityHeadersMiddleware, csrfMiddleware],
 }));

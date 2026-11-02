@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api_/agent/links")({
                 customDomain: null,
                 kind: parsed.data.kind ?? "qr",
               });
-              return agentOk({ id: row["id"], short_url: `${publicOrigin(request)}/${row["slug"]}`, target_url: row["target_url"], created_by_client: agent.clientId }, 201);
+              return agentOk({ id: row["id"], short_url: `${publicOrigin(request)}/s/${row["slug"]}`, target_url: row["target_url"], created_by_client: agent.clientId }, 201);
             } catch (error) {
               const message = error instanceof Error ? error.message : "";
               if (message.includes("quota reached")) {

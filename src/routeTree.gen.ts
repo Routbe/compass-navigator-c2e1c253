@@ -20,6 +20,7 @@ import { Route as BatchRouteImport } from './routes/batch'
 import { Route as CardRouteImport } from './routes/card'
 import { Route as ClaimRouteImport } from './routes/claim'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DataDeletionRouteImport } from './routes/data-deletion'
 import { Route as DevRouteImport } from './routes/dev'
@@ -397,6 +398,11 @@ const ClaimRoute = ClaimRouteImport.update({
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -2134,6 +2140,7 @@ export interface FileRoutesByFullPath {
   '/card': typeof CardRoute
   '/claim': typeof ClaimRoute
   '/compare': typeof CompareRouteWithChildren
+  '/connect': typeof ConnectRoute
   '/contact': typeof ContactRoute
   '/data-deletion': typeof DataDeletionRoute
   '/dev': typeof DevRouteWithChildren
@@ -2467,6 +2474,7 @@ export interface FileRoutesByTo {
   '/batch': typeof BatchRoute
   '/card': typeof CardRoute
   '/claim': typeof ClaimRoute
+  '/connect': typeof ConnectRoute
   '/contact': typeof ContactRoute
   '/data-deletion': typeof DataDeletionRoute
   '/developers': typeof DevelopersRoute
@@ -2791,6 +2799,7 @@ export interface FileRoutesById {
   '/card': typeof CardRoute
   '/claim': typeof ClaimRoute
   '/compare': typeof CompareRouteWithChildren
+  '/connect': typeof ConnectRoute
   '/contact': typeof ContactRoute
   '/data-deletion': typeof DataDeletionRoute
   '/dev': typeof DevRouteWithChildren
@@ -3129,6 +3138,7 @@ export interface FileRouteTypes {
     | '/card'
     | '/claim'
     | '/compare'
+    | '/connect'
     | '/contact'
     | '/data-deletion'
     | '/dev'
@@ -3462,6 +3472,7 @@ export interface FileRouteTypes {
     | '/batch'
     | '/card'
     | '/claim'
+    | '/connect'
     | '/contact'
     | '/data-deletion'
     | '/developers'
@@ -3785,6 +3796,7 @@ export interface FileRouteTypes {
     | '/card'
     | '/claim'
     | '/compare'
+    | '/connect'
     | '/contact'
     | '/data-deletion'
     | '/dev'
@@ -4123,6 +4135,7 @@ export interface RootRouteChildren {
   CardRoute: typeof CardRoute
   ClaimRoute: typeof ClaimRoute
   CompareRoute: typeof CompareRouteWithChildren
+  ConnectRoute: typeof ConnectRoute
   ContactRoute: typeof ContactRoute
   DataDeletionRoute: typeof DataDeletionRoute
   DevRoute: typeof DevRouteWithChildren
@@ -4362,6 +4375,13 @@ declare module '@tanstack/react-router' {
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -7197,6 +7217,7 @@ const rootRouteChildren: RootRouteChildren = {
   CardRoute: CardRoute,
   ClaimRoute: ClaimRoute,
   CompareRoute: CompareRouteWithChildren,
+  ConnectRoute: ConnectRoute,
   ContactRoute: ContactRoute,
   DataDeletionRoute: DataDeletionRoute,
   DevRoute: DevRouteWithChildren,

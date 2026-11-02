@@ -81,7 +81,7 @@ function ConnectPage() {
           )}
           <span className="text-muted-foreground" aria-hidden>⇄</span>
           <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-muted">
-            <RoutLogo className="h-6 w-6" />
+            <RoutLogo size={24} showWordmark={false} />
           </span>
         </div>
 

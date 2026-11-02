@@ -213,5 +213,17 @@
   "auth.signupConsent.implicitAfter": "and confirm you are 16+.",
   "auth.scope.agentAssets": "Create QR codes and short links for you (within your plan)",
   "auth.scope.agentDraft": "Prepare profile drafts — you always publish yourself",
-  "auth.scope.agentIdentity": "See whether you are a verified human (never your relays or legal name)"
+  "auth.scope.agentIdentity": "See whether you are a verified human (never your relays or legal name)",
+  "connect.unknownApp": "An AI assistant",
+  "connect.loading": "Loading",
+  "connect.title": "Connect {{app}} to ROUT",
+  "connect.intro": "{{app}} asks for access to your ROUT account to manage QR codes and links for you. Create an account or sign in to review the request.",
+  "connect.point.assets": "It can only do what you approve on the next screen, within your own plan limits.",
+  "connect.point.control": "Publishing live and verifying your identity always stay your decisions.",
+  "connect.point.ephemeral": "Access uses short-lived tokens (max. 1 hour) and you can revoke it at any time under Connected apps.",
+  "connect.signUp": "Create a ROUT account",
+  "connect.signIn": "I already have an account",
+  "connect.devTitle": "Connect an AI agent",
+  "connect.devIntro": "Agents send their user here with standard OAuth 2.1 parameters (PKCE). After consent they receive a code and exchange it for a short-lived token.",
+  "connect.devDocs": "Developer docs"
 }

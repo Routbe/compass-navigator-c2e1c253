@@ -126,14 +126,14 @@ import {
   getStudioProfile,
   publishStudioProfile,
   discardStudioDraft,
-  saveStudioProfile,
 } from "@/lib/studio-profile.functions";
+import { updateProfileLinks, updateProfileMeta, updateProfileTheme } from "@/lib/profile-draft.functions";
+import { diffStudioSnapshot, hasPatches, type StudioSnapshot } from "@/lib/profile-draft-patch";
 import {
   checkAliasHandle,
   discardAliasDraft,
   getAliasProfile,
   publishAliasProfile,
-  saveAliasProfile,
 } from "@/lib/alias-profile.functions";
 import { SubdomainPanel } from "@/components/dashboard/SubdomainPanel";
 import { BadgesPanel } from "@/components/dashboard/BadgesPanel";
@@ -167,7 +167,13 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
   const alias = variant === "alias";
   const loadProfileEditor = useServerFn(alias ? getAliasProfile : getStudioProfile);
   const checkHandle = useServerFn(alias ? checkAliasHandle : checkStudioHandle);
-  const saveProfile = useServerFn(alias ? saveAliasProfile : saveStudioProfile);
+  // Atomic mutations: each section saves on its own, bound to this canvas.
+  const space = alias ? "alias" : "verified";
+  const saveMeta = useServerFn(updateProfileMeta);
+  const saveTheme = useServerFn(updateProfileTheme);
+  const saveLinks = useServerFn(updateProfileLinks);
+  /** Last state the server confirmed; the next save sends only what differs. */
+  const savedSnapshot = useRef<StudioSnapshot | null>(null);
   const publishProfile = useServerFn(alias ? publishAliasProfile : publishStudioProfile);
   const discardDraft = useServerFn(alias ? discardAliasDraft : discardStudioDraft);
   const loadAnalytics = useServerFn(getStudioAnalytics);
@@ -538,6 +544,7 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
     if (loading) return;
     if (firstDraft.current) {
       firstDraft.current = false;
+      savedSnapshot.current = currentSnapshot();
       return;
     }
     editRev.current += 1;
@@ -588,6 +595,18 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
     return () => window.removeEventListener("beforeunload", onLeave);
   }, [dirty]);
 
+  const currentSnapshot = (): StudioSnapshot => ({
+    username: normalized,
+    displayName: displayName.trim() || null,
+    tagline: tagline.trim() || null,
+    avatarUrl: avatarUrl.trim() || null,
+    faviconUrl: faviconUrl.trim() || null,
+    theme,
+    cardStyle,
+    prefs: prefs as unknown as Record<string, unknown>,
+    blocks: blocks as unknown[],
+  });
+
   const save = async (silent = false) => {
     if (!user) return;
     if (!handleOk) {
@@ -596,22 +615,16 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
     }
     setSaving(true);
     const rev = editRev.current;
-    let result: Awaited<ReturnType<typeof saveProfile>>;
+    const next = currentSnapshot();
+    const patches = diffStudioSnapshot(savedSnapshot.current, next);
+    type PatchResult = Awaited<ReturnType<typeof saveMeta>>;
+    let results: PatchResult[];
     try {
-      result = await saveProfile({
-      data: {
-        username: normalized,
-        displayName: displayName.trim() || null,
-        tagline: tagline.trim() || null,
-        avatarUrl: avatarUrl.trim() || null,
-        faviconUrl: faviconUrl.trim() || null,
-        theme,
-        cardStyle,
-        blocks: blocks as unknown as never,
-        displayPrefs: prefs as unknown as never,
-        expectedRevision: draftRevision,
-      },
-    });
+      const calls: Promise<PatchResult>[] = [];
+      if (patches.meta) calls.push(saveMeta({ data: { space, ...patches.meta } }));
+      if (patches.theme) calls.push(saveTheme({ data: { space, ...patches.theme } as never }));
+      if (patches.links) calls.push(saveLinks({ data: { space, blocks: patches.links.blocks as never } }));
+      results = hasPatches(patches) ? await Promise.all(calls) : [];
     } catch (e) {
       failCount.current += 1;
       setSaveError(classifySaveError(e instanceof Error && /fetch|network|load failed/i.test(e.message) ? "failed to fetch" : e));
@@ -620,37 +633,34 @@ export function ProfileEditor({ variant = "verified", pageMode = "profile", onPa
       return;
     }
     setSaving(false);
-    if (!result.ok) {
-      const info: SaveErrorInfo = result.error;
-      // Conflict (e.g. a QR save bumped the revision): adopt the newest revision and
-      // its QR settings, then save again instead of retrying a stale revision forever.
-      const conflict = "conflict" in result ? result.conflict : null;
-      if (info.code === "conflict" && conflict && conflictRebases.current < 3) {
-        conflictRebases.current += 1;
-        setDraftRevision(conflict.currentRevision);
-        if (conflict.qrSettingsJson) {
-          const qr = JSON.parse(conflict.qrSettingsJson) as unknown;
-          setPrefs((p) => ({ ...p, qrSettings: qr }) as typeof p);
-        }
-        setRetryIn((n) => n + 1);
-        return;
-      }
+    const failed = results.find((r) => !r.ok);
+    // Sections that succeeded are confirmed even when another one failed.
+    const base = savedSnapshot.current;
+    const confirmed: StudioSnapshot = base ? { ...base, prefs: { ...base.prefs } } : next;
+    const okMeta = results.filter((r) => r.ok).map((r) => r.meta);
+    if (base) {
+      const okAt = (i: number) => results[i]?.ok === true;
+      let i = 0;
+      if (patches.meta) { if (okAt(i)) Object.assign(confirmed, { username: next.username, displayName: next.displayName, tagline: next.tagline, avatarUrl: next.avatarUrl, faviconUrl: next.faviconUrl }); i += 1; }
+      if (patches.theme) { if (okAt(i)) Object.assign(confirmed, { theme: next.theme, cardStyle: next.cardStyle, prefs: next.prefs }); i += 1; }
+      if (patches.links) { if (okAt(i)) confirmed.blocks = next.blocks; }
+    }
+    if (!failed || base) savedSnapshot.current = failed ? confirmed : next;
+    const latest = okMeta.reduce<{ draftRevision: number; publishedRevision: number } | null>(
+      (acc, m) => (m && (!acc || m.draftRevision > acc.draftRevision) ? m : acc),
+      null,
+    );
+    if (latest) {
+      setDraftRevision(latest.draftRevision);
+      setPublishedRevision(latest.publishedRevision);
+    }
+    if (failed && failed.error) {
       failCount.current += 1;
-      setSaveError(info);
+      setSaveError(failed.error);
       if (silent) return;
-      if (result.reason === "handle_taken") return toast.error(t("studio.editor.taken"));
-      if (result.reason === "handle_reserved")
-        return toast.error(t("studio.editor.reserved"));
-      if (result.reason === "handle_invalid") return toast.error(t("studio.editor.invalid"));
-      if (result.reason === "handle_identity_mismatch")
-        return toast.error(VERIFIED_STRUCTURE_MESSAGE);
-      return toast.error(result.reason ?? t("studio.editor.saveFailedEn"));
+      return toast.error(failed.error.detail ?? t("studio.editor.saveFailedEn"));
     }
     setClaimed(normalized);
-    const nextRevision = Number((result.profile as { draftRevision?: number } | null)?.draftRevision ?? draftRevision);
-    const nextPublished = Number((result.profile as { publishedRevision?: number } | null)?.publishedRevision ?? publishedRevision);
-    setDraftRevision(nextRevision);
-    setPublishedRevision(nextPublished);
     failCount.current = 0;
     conflictRebases.current = 0;
     setSaveError(null);

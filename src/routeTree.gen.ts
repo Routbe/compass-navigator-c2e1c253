@@ -208,6 +208,7 @@ import { Route as ApiAdminMailCheckRouteImport } from './routes/api_.admin.mail-
 import { Route as ApiAgentIdentityRouteImport } from './routes/api_.agent.identity'
 import { Route as ApiAgentLinksRouteImport } from './routes/api_.agent.links'
 import { Route as ApiAuthSplatRouteImport } from './routes/api_.auth.$'
+import { Route as ApiBadgeVerifyRouteImport } from './routes/api_.badge.verify'
 import { Route as ApiBunqCheckStatusRouteImport } from './routes/api_.bunq.check-status'
 import { Route as ApiPresenceNowPlayingRouteImport } from './routes/api_.presence.now-playing'
 import { Route as ApiProfilesCheckHandleRouteImport } from './routes/api_.profiles.check-handle'
@@ -1368,6 +1369,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBadgeVerifyRoute = ApiBadgeVerifyRouteImport.update({
+  id: '/api_/badge/verify',
+  path: '/api/badge/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBunqCheckStatusRoute = ApiBunqCheckStatusRouteImport.update({
   id: '/api_/bunq/check-status',
   path: '/api/bunq/check-status',
@@ -2313,6 +2319,7 @@ export interface FileRoutesByFullPath {
   '/api/agent/identity': typeof ApiAgentIdentityRoute
   '/api/agent/links': typeof ApiAgentLinksRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/badge/verify': typeof ApiBadgeVerifyRoute
   '/api/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api/presence/now-playing': typeof ApiPresenceNowPlayingRoute
   '/api/profiles/check-handle': typeof ApiProfilesCheckHandleRoute
@@ -2632,6 +2639,7 @@ export interface FileRoutesByTo {
   '/api/agent/identity': typeof ApiAgentIdentityRoute
   '/api/agent/links': typeof ApiAgentLinksRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/badge/verify': typeof ApiBadgeVerifyRoute
   '/api/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api/presence/now-playing': typeof ApiPresenceNowPlayingRoute
   '/api/profiles/check-handle': typeof ApiProfilesCheckHandleRoute
@@ -2968,6 +2976,7 @@ export interface FileRoutesById {
   '/api_/agent/identity': typeof ApiAgentIdentityRoute
   '/api_/agent/links': typeof ApiAgentLinksRoute
   '/api_/auth/$': typeof ApiAuthSplatRoute
+  '/api_/badge/verify': typeof ApiBadgeVerifyRoute
   '/api_/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api_/presence/now-playing': typeof ApiPresenceNowPlayingRoute
   '/api_/profiles/check-handle': typeof ApiProfilesCheckHandleRoute
@@ -3305,6 +3314,7 @@ export interface FileRouteTypes {
     | '/api/agent/identity'
     | '/api/agent/links'
     | '/api/auth/$'
+    | '/api/badge/verify'
     | '/api/bunq/check-status'
     | '/api/presence/now-playing'
     | '/api/profiles/check-handle'
@@ -3624,6 +3634,7 @@ export interface FileRouteTypes {
     | '/api/agent/identity'
     | '/api/agent/links'
     | '/api/auth/$'
+    | '/api/badge/verify'
     | '/api/bunq/check-status'
     | '/api/presence/now-playing'
     | '/api/profiles/check-handle'
@@ -3959,6 +3970,7 @@ export interface FileRouteTypes {
     | '/api_/agent/identity'
     | '/api_/agent/links'
     | '/api_/auth/$'
+    | '/api_/badge/verify'
     | '/api_/bunq/check-status'
     | '/api_/presence/now-playing'
     | '/api_/profiles/check-handle'
@@ -4189,6 +4201,7 @@ export interface RootRouteChildren {
   ApiAgentIdentityRoute: typeof ApiAgentIdentityRoute
   ApiAgentLinksRoute: typeof ApiAgentLinksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiBadgeVerifyRoute: typeof ApiBadgeVerifyRoute
   ApiBunqCheckStatusRoute: typeof ApiBunqCheckStatusRoute
   ApiPresenceNowPlayingRoute: typeof ApiPresenceNowPlayingRoute
   ApiProfilesCheckHandleRoute: typeof ApiProfilesCheckHandleRoute
@@ -5665,6 +5678,13 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api_/badge/verify': {
+      id: '/api_/badge/verify'
+      path: '/api/badge/verify'
+      fullPath: '/api/badge/verify'
+      preLoaderRoute: typeof ApiBadgeVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api_/bunq/check-status': {
@@ -7255,6 +7275,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAgentIdentityRoute: ApiAgentIdentityRoute,
   ApiAgentLinksRoute: ApiAgentLinksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiBadgeVerifyRoute: ApiBadgeVerifyRoute,
   ApiBunqCheckStatusRoute: ApiBunqCheckStatusRoute,
   ApiPresenceNowPlayingRoute: ApiPresenceNowPlayingRoute,
   ApiProfilesCheckHandleRoute: ApiProfilesCheckHandleRoute,

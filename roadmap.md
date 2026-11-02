@@ -63,3 +63,6 @@
 - [ ] Custom domains M2M: pending + DNS records, verify endpoint
 - [ ] Agent rollbacks: previous_state snapshot only for Agent/Bot mutations (none for humans) + POST /api/audit/revert/{log_id}
 - [ ] Outbound agent webhooks: agent_webhook_url, signed events (workspace.upgraded, domain.verified)
+
+## Workspace Studio parity (after agent phase 1)
+- [ ] Workspace Studio (/studio/w/<slug>/hub) uses the same Studio engine as the personal Studio (all tabs, design, block types, QR, advanced settings), loading/saving by workspace_id

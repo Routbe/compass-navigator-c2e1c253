@@ -34,6 +34,8 @@ import { IDENTITY_EMAIL_CONFLICT } from "@/lib/identity/link-rules";
 import { AUTH_UNAVAILABLE_TEXT, type AuthReadiness } from "@/lib/auth-readiness";
 import { useI18n } from "@/lib/i18n";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { SIGNUP_CONSENT_HEADER, SIGNUP_CONSENT_VERSION, canSubmitSignUp } from "@/lib/signup-consent";
 
 /** Providers die via Better Auth's generic OAuth/OIDC-plugin lopen. */
 const GENERIC_OAUTH = new Set(["oidc", "infomaniak", "proton"]);
@@ -360,8 +362,10 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
     }
   };
 
+  const [consented, setConsented] = useState(false);
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consented) { toast.error(t("auth.signupConsent.required")); return; }
     if (unavailable) { toast.error(AUTH_UNAVAILABLE_TEXT[locale]); return; }
     if (adminPortal) return;
     if (!emailAccepted()) return;
@@ -373,7 +377,7 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
     const address = email.trim().toLowerCase();
     try {
       const result = await withAltcha(address, (proof) =>
-        authClient.signUp.email({ email: address, password, name: address.split("@")[0] ?? address, callbackURL, fetchOptions: { headers: { "x-altcha": proof } } }),
+        authClient.signUp.email({ email: address, password, name: address.split("@")[0] ?? address, callbackURL, fetchOptions: { headers: { "x-altcha": proof, [SIGNUP_CONSENT_HEADER]: SIGNUP_CONSENT_VERSION } } }),
       );
       const error = (result as { error?: { message?: string } } | undefined)?.error;
       if (error) {
@@ -438,6 +442,13 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
             <KeyRound className="h-4 w-4" /> {t("auth.passkey")}
           </Button>
 
+          {!adminPortal && (
+            <p data-testid="auth-implicit-consent" className="mb-2 text-center text-[11px] leading-relaxed text-muted-foreground">
+              {t("auth.signupConsent.implicitBefore")}{" "}
+              <Link to="/terms" className="underline underline-offset-2 hover:text-foreground">{t("auth.signupConsent.termsShort")}</Link>{" "}
+              {t("auth.signupConsent.implicitAfter")}
+            </p>
+          )}
           <div
             data-testid="auth-provider-tiles"
             className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-7"
@@ -608,10 +619,27 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
                 required
                 minLength={MIN_PASSWORD_LENGTH}
               />
+              <div className="flex items-start gap-2.5 rounded-lg border border-border p-3">
+                <Checkbox
+                  id="auth-signup-consent"
+                  checked={consented}
+                  onCheckedChange={(v) => setConsented(v === true)}
+                  required
+                  aria-required="true"
+                  className="mt-0.5"
+                />
+                <label htmlFor="auth-signup-consent" className="text-xs leading-relaxed text-muted-foreground">
+                  {t("auth.signupConsent.before")}{" "}
+                  <Link to="/terms" className="font-medium text-foreground underline underline-offset-2">{t("auth.signupConsent.terms")}</Link>{" "}
+                  {t("auth.signupConsent.and")}{" "}
+                  <Link to="/privacy" className="font-medium text-foreground underline underline-offset-2">{t("auth.signupConsent.privacy")}</Link>{" "}
+                  {t("auth.signupConsent.after")}
+                </label>
+              </div>
               <Button
                 type="submit"
                 className="h-11 w-full rounded-lg font-medium"
-                disabled={loading || unavailable || !!emailError}
+                disabled={!canSubmitSignUp({ consented, busy: loading, unavailable, emailError: !!emailError })}
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("auth.ui.signup.cta")}
               </Button>

@@ -4,7 +4,6 @@ import { getSocialPlatformIcon, isEmailLike } from "@/lib/social-icons";
 import { buildVCard } from "@/lib/vcard";
 import { bioContainsLink, stripBioLinks } from "@/lib/bio-rules";
 import { decodePending, encodePending, safeEqual, generateCode } from "@/lib/fediverse-otp.server";
-import { validateBirthdate } from "@/lib/birthdate.server";
 import { profileText } from "@/lib/profile-i18n";
 
 describe("icoonkeuze", () => {
@@ -56,15 +55,6 @@ describe("Fediverse e-mailcode", () => {
     expect(generateCode()).toMatch(/^\d{6}$/);
     expect(safeEqual("abc", "abc")).toBe(true);
     expect(safeEqual("abc", "abd")).toBe(false);
-  });
-});
-
-describe("geboortedatum", () => {
-  it("valideert datum en minimumleeftijd", () => {
-    const now = new Date("2026-10-07T00:00:00Z");
-    expect(validateBirthdate("1990-05-01", now)).toBe("1990-05-01");
-    expect(() => validateBirthdate("2020-01-01", now)).toThrow();
-    expect(() => validateBirthdate("1990-02-31", now)).toThrow();
   });
 });
 

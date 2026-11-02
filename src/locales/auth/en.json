@@ -201,5 +201,14 @@
   "auth.scope.profileRead": "Public profile (handle, avatar, bio)",
   "auth.scope.legalName": "Official legal name (requires verified identity)",
   "auth.scope.nationalId": "National registry number — trusted partners only, needs extra confirmation",
-  "auth.consent.trustedPartner": "This app is a trusted ROUT identity partner."
+  "auth.consent.trustedPartner": "This app is a trusted ROUT identity partner.",
+  "auth.signupConsent.before": "I agree to the",
+  "auth.signupConsent.terms": "Terms of Service",
+  "auth.signupConsent.and": "and the",
+  "auth.signupConsent.privacy": "Privacy Policy",
+  "auth.signupConsent.after": "and confirm that I am 16 or older (or have consent from a parent/guardian).",
+  "auth.signupConsent.required": "Tick the box to create your account.",
+  "auth.signupConsent.implicitBefore": "By signing in you agree to the",
+  "auth.signupConsent.termsShort": "Terms",
+  "auth.signupConsent.implicitAfter": "and confirm you are 16+."
 }

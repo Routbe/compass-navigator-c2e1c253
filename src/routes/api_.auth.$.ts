@@ -160,6 +160,15 @@ export async function handleAuthRequest({ request }: { request: Request }) {
       console.info(`[auth] gitlab redirect_uri=${gitlabRedirectUri()}`);
     }
 
+    // No local account without the terms / privacy / 16+ confirmation.
+    const { missingSignUpConsent, SIGNUP_CONSENT_HEADER } = await import("@/lib/signup-consent");
+    if (missingSignUpConsent(request.method, relativePath, request.headers.get(SIGNUP_CONSENT_HEADER))) {
+      return Response.json(
+        { code: "consent_required", message: "Ga akkoord met de Algemene Voorwaarden en het Privacybeleid en bevestig dat je 16 jaar of ouder bent." },
+        { status: 400, headers: { "cache-control": "no-store" } },
+      );
+    }
+
     // Self-hosted ALTCHA proof required before Better Auth runs: no user is
     // created and no mail is sent without it. Social/OAuth stay open.
     if (request.method === "POST" && ALTCHA_PATHS.has(relativePath)) {

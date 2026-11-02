@@ -15,7 +15,6 @@ export interface VCardConfig {
   org: string;
   phones: VCardPhone[];
   address: string;
-  birthday: string;
   note: string;
   /** Notitie = bio van het profiel op het moment van downloaden. */
   noteUseBio: boolean;
@@ -32,7 +31,6 @@ export const DEFAULT_VCARD_CONFIG: VCardConfig = {
   org: "",
   phones: [],
   address: "",
-  birthday: "",
   note: "",
   noteUseBio: false,
   urlOverride: "",
@@ -65,7 +63,6 @@ export function parseVCardConfig(raw: string | null | undefined): VCardConfig {
       }))
       .slice(0, 5),
     address: str(r["address"], 200),
-    birthday: /^\d{4}-\d{2}-\d{2}$/.test(String(r["birthday"] ?? "")) ? String(r["birthday"]) : "",
     note: str(r["note"], 300),
     noteUseBio: bool("noteUseBio"),
     urlOverride: /^https?:\/\//i.test(String(r["urlOverride"] ?? "")) ? str(r["urlOverride"], 300) : "",
@@ -93,8 +90,6 @@ export interface VCardInput {
   phones?: VCardPhone[];
   /** Vrij adres als één regel (ADR, straat-veld). */
   address?: string | null;
-  /** YYYY-MM-DD. */
-  birthday?: string | null;
   /** Expliciete notitie; wint van tagline/bio. */
   note?: string | null;
   /** Extra URL's (socials, website) die in de contactkaart terechtkomen. */
@@ -138,7 +133,6 @@ export function buildVCard(input: VCardInput): string {
     ...(input.org?.trim() ? [`ORG:${esc(input.org.trim())}`] : []),
     ...(input.title?.trim() ? [`TITLE:${esc(input.title.trim())}`] : []),
     ...(input.address?.trim() ? [`ADR;TYPE=WORK:;;${esc(input.address.trim())};;;;`] : []),
-    ...(input.birthday && /^\d{4}-\d{2}-\d{2}$/.test(input.birthday) ? [`BDAY:${input.birthday}`] : []),
     ...(input.photoBase64
       ? [`PHOTO;ENCODING=b;TYPE=JPEG:${input.photoBase64}`]
       : input.avatarUrl?.startsWith("http")

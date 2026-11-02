@@ -201,5 +201,14 @@
   "auth.scope.profileRead": "Profil public (pseudo, avatar, bio)",
   "auth.scope.legalName": "Nom légal officiel (identité vérifiée requise)",
   "auth.scope.nationalId": "Numéro de registre national — partenaires agréés uniquement, confirmation supplémentaire",
-  "auth.consent.trustedPartner": "Cette app est un partenaire d'identité agréé de ROUT."
+  "auth.consent.trustedPartner": "Cette app est un partenaire d'identité agréé de ROUT.",
+  "auth.signupConsent.before": "J'accepte les",
+  "auth.signupConsent.terms": "Conditions générales",
+  "auth.signupConsent.and": "et la",
+  "auth.signupConsent.privacy": "Politique de confidentialité",
+  "auth.signupConsent.after": "et je confirme avoir 16 ans ou plus (ou l'accord d'un parent/tuteur).",
+  "auth.signupConsent.required": "Cochez la case pour créer votre compte.",
+  "auth.signupConsent.implicitBefore": "En vous connectant, vous acceptez les",
+  "auth.signupConsent.termsShort": "Conditions",
+  "auth.signupConsent.implicitAfter": "et confirmez avoir 16 ans ou plus."
 }

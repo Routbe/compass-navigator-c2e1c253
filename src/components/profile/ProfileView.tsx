@@ -698,7 +698,6 @@ export function ProfileView({
                       org: c.org,
                       title: c.title,
                       address: c.address,
-                      birthday: c.birthday,
                       profileUrl:
                         c.urlOverride ||
                         (typeof window === "undefined" ? `https://rout.be/${profile.username ?? ""}` : window.location.origin + window.location.pathname),

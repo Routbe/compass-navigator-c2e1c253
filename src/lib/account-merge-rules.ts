@@ -76,6 +76,7 @@ export const MERGE_TABLES: Readonly<Record<string, MergeTableRule>> = {
   user_music_status: one(),
   user_phone_numbers: one(),
   user_snapchat: one(),
+  user_verified_claims: one(),
   // Keyed uniqueness: the primary's row wins on the same key.
   admin_permissions: r("dedupe_keep_primary", ["X.permission"]),
   app_email_assignments: r("dedupe_keep_primary", ["X.client_id"]),

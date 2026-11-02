@@ -31,6 +31,15 @@
     },
     {
       "schema": "public",
+      "name": "claim_verification_provider",
+      "labels": [
+        "none",
+        "itsme",
+        "eidas"
+      ]
+    },
+    {
+      "schema": "public",
       "name": "identity_provider",
       "labels": [
         "w_identity",
@@ -19651,6 +19660,98 @@
           "INSERT",
           "SELECT",
           "UPDATE"
+        ]
+      }
+    },
+    {
+      "schema": "public",
+      "name": "user_verified_claims",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "is_verified_human",
+          "type": "boolean",
+          "notNull": true,
+          "default": "false",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "is_over_18",
+          "type": "boolean",
+          "notNull": true,
+          "default": "false",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "verification_provider",
+          "type": "claim_verification_provider",
+          "notNull": true,
+          "default": "'none'::claim_verification_provider",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "user_verified_claims_pkey",
+          "kind": "p",
+          "def": "PRIMARY KEY (user_id)"
+        },
+        {
+          "name": "user_verified_claims_proven",
+          "kind": "c",
+          "def": "CHECK ((((NOT is_verified_human) AND (NOT is_over_18)) OR ((verification_provider <> 'none'::claim_verification_provider) AND (verified_at IS NOT NULL))))"
+        },
+        {
+          "name": "user_verified_claims_user_id_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+        }
+      ],
+      "indexes": [],
+      "triggers": [],
+      "rls": true,
+      "forceRls": false,
+      "policies": [
+        {
+          "name": "rout_owner_read",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "SELECT",
+          "using": "(user_id = rout_current_user_id())",
+          "check": null
+        }
+      ],
+      "grants": {
+        "rout_app": [
+          "SELECT"
         ]
       }
     },

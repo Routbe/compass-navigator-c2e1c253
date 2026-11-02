@@ -201,5 +201,14 @@
   "auth.scope.profileRead": "Publieke profielgegevens (handle, avatar, bio)",
   "auth.scope.legalName": "Officiële wettelijke naam (vereist geverifieerde identiteit)",
   "auth.scope.nationalId": "Rijksregisternummer — enkel voor erkende partners, vraagt extra bevestiging",
-  "auth.consent.trustedPartner": "Deze app is een erkende identiteitspartner van ROUT."
+  "auth.consent.trustedPartner": "Deze app is een erkende identiteitspartner van ROUT.",
+  "auth.signupConsent.before": "Ik ga akkoord met de",
+  "auth.signupConsent.terms": "Algemene Voorwaarden",
+  "auth.signupConsent.and": "en het",
+  "auth.signupConsent.privacy": "Privacybeleid",
+  "auth.signupConsent.after": "en bevestig dat ik 16 jaar of ouder ben (of toestemming heb van een ouder/voogd).",
+  "auth.signupConsent.required": "Vink het vakje aan om je account aan te maken.",
+  "auth.signupConsent.implicitBefore": "Door in te loggen ga je akkoord met de",
+  "auth.signupConsent.termsShort": "Voorwaarden",
+  "auth.signupConsent.implicitAfter": "en bevestig je 16+ te zijn."
 }

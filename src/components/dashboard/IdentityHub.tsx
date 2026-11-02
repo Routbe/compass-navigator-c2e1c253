@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Copy, Fingerprint, Loader2, Mail, Send, ShieldCheck, Webhook } from "lucide-react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SovereignTrustWidget } from "@/components/dashboard/SovereignTrustWidget";
 import { ConnectedAppsPanel } from "@/components/settings/ConnectedAppsPanel";
 import { withStepUp } from "@/components/auth/StepUpDialog";
 import { Badge } from "@/components/ui/badge";
@@ -110,6 +111,7 @@ export function IdentityHub() {
       crumbs={[{ label: "Command Center", to: "/dashboard" }, { label: "Identity" }]}
     >
       <div className="space-y-4">
+        <SovereignTrustWidget />
         <section className="space-y-3 rounded-2xl border border-border bg-card p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-lg font-medium">

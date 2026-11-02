@@ -42,7 +42,8 @@ export const redirectUriSchema = z
 
 export const MAX_REDIRECT_URIS = 10;
 
-export const scopeEnum = z.enum(["openid", "profile", "email", "linked_accounts"]);
+/** Agent scopes are human-delegated and always ride on ≤1 h tokens (src/lib/agent/agent-scopes.ts). */
+export const scopeEnum = z.enum(["openid", "profile", "email", "linked_accounts", "assets:write", "profile:draft", "identity:read_public"]);
 
 export const clientSchema = z
   .object({
@@ -55,7 +56,7 @@ export const clientSchema = z
     termsUrl: optionalHttpsUrl,
     redirectUris: z.array(redirectUriSchema).max(MAX_REDIRECT_URIS),
     postLogoutRedirectUris: z.array(redirectUriSchema).max(MAX_REDIRECT_URIS).optional(),
-    scopes: z.array(scopeEnum).max(4),
+    scopes: z.array(scopeEnum).max(7),
     flowPreference: z.enum(["seamless", "strict"]).optional(),
     richIdentityEnabled: z.boolean().optional(),
     handleSyncEnabled: z.boolean().optional(),

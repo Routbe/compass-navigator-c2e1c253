@@ -19,6 +19,24 @@ const SCOPES = [
     text: "Welke sign-ins (Google, Apple, GitHub…) aan het ROUT-account hangen. Gebruik dit om bestaande accounts te herkennen en te koppelen i.p.v. dubbel aan te maken.",
     locked: false,
   },
+  {
+    id: "assets:write",
+    label: "assets:write (agent)",
+    text: "AI-agent maakt QR-codes en korte links voor het lid, binnen diens abonnement (anders HTTP 402). Token max. 1 uur geldig.",
+    locked: false,
+  },
+  {
+    id: "profile:draft",
+    label: "profile:draft (agent)",
+    text: "AI-agent zet profielontwerpen klaar. Live zetten blijft een menselijke stap (status human_action_required).",
+    locked: false,
+  },
+  {
+    id: "identity:read_public",
+    label: "identity:read_public (agent)",
+    text: "Leest enkel de publieke verificatiestatus (geverifieerde mens ja/nee). Nooit identity relays of wettelijke naam.",
+    locked: false,
+  },
 ];
 
 function ScopesPage() {

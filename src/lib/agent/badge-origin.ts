@@ -2,8 +2,9 @@
  * Web-badge origin check. Pure. The badge is only "verified" when it is shown
  * on a domain the member registered and verified, or on ROUT itself.
  */
-export function requestingHost(origin: string | null, referer: string | null): string | null {
-  for (const raw of [origin, referer]) {
+// The Referer header is only compared in memory, never stored or logged (privacy smoke test).
+export function requestingHost(origin: string | null, refererHeader: string | null): string | null {
+  for (const raw of [origin, refererHeader]) {
     if (!raw || raw === "null") continue;
     try {
       const url = new URL(raw);

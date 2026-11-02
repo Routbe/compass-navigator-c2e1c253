@@ -61,6 +61,33 @@ export async function runDraftPatch(
   }
 }
 
+/**
+ * Same contract for the workspace canvas. The role is checked first (owners,
+ * admins and editors write), RLS on workspace_profile_drafts checks it again.
+ */
+export async function runWorkspaceDraftPatch(
+  userId: string,
+  workspaceId: string,
+  patch: { fields?: Record<string, unknown>; prefs?: Record<string, unknown>; dropPrefs?: string[] },
+  endpoint: string,
+) {
+  try {
+    const { getWorkspaceRole } = await import("./workspaces.server");
+    const { canEditWorkspaceHub } = await import("./workspace-rules");
+    if (!canEditWorkspaceHub(await getWorkspaceRole(userId, workspaceId))) {
+      return { ok: false as const, meta: null, error: classifySaveError("forbidden: workspace editors only") };
+    }
+    const { patchWorkspaceDraft } = await import("./workspace-studio.server");
+    const meta = await patchWorkspaceDraft(workspaceId, patch);
+    return { ok: true as const, meta, error: null };
+  } catch (raw) {
+    const error = classifySaveError(raw);
+    console.error(`[draft-patch] workspace ${endpoint} ${error.code}: ${error.detail}`);
+    if (isCriticalSaveError(error.code)) void autoReport(raw, error, userId, workspaceId, endpoint);
+    return { ok: false as const, meta: null, error };
+  }
+}
+
 async function autoReport(raw: unknown, error: SaveErrorInfo, userId: string, workspaceId: string | null, endpoint: string) {
   try {
     const { reportError } = await import("@/lib/email/error-reporter.server");

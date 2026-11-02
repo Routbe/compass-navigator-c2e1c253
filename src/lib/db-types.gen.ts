@@ -207,6 +207,18 @@ export interface PublicAdminPermissionsRow {
   "created_at": string | Date;
 }
 
+export interface PublicAgentWorkspaceClaimsRow {
+  "workspace_id": string;
+  "client_id": string;
+  "requested_by": string | null;
+  "token_hash": string;
+  "created_at": string | Date;
+  "expires_at": string | Date;
+  "claimed_at": string | Date | null;
+  "claimed_by": string | null;
+  "bot_revoked_at": string | Date | null;
+}
+
 export interface PublicAliasProfilesRow {
   "user_id": string;
   "handle": string;
@@ -2015,6 +2027,17 @@ export interface PublicWorkspaceMembersRow {
   "created_at": string | Date;
 }
 
+export interface PublicWorkspaceProfileDraftsRow {
+  "workspace_id": string;
+  "payload": JsonValue;
+  "revision": string;
+  "published_revision": string;
+  "updated_by": string | null;
+  "created_at": string | Date;
+  "updated_at": string | Date;
+  "published_at": string | Date | null;
+}
+
 export interface PublicWorkspaceRootAliasesRow {
   "handle": string;
   "workspace_id": string;
@@ -2092,6 +2115,7 @@ export interface DbTables {
   "public.admin_audit_log": PublicAdminAuditLogRow;
   "public.admin_bootstrap_tokens": PublicAdminBootstrapTokensRow;
   "public.admin_permissions": PublicAdminPermissionsRow;
+  "public.agent_workspace_claims": PublicAgentWorkspaceClaimsRow;
   "public.alias_profiles": PublicAliasProfilesRow;
   "public.alias_sync_jobs": PublicAliasSyncJobsRow;
   "public.altcha_used": PublicAltchaUsedRow;
@@ -2240,6 +2264,7 @@ export interface DbTables {
   "public.webhook_events": PublicWebhookEventsRow;
   "public.workspace_invites": PublicWorkspaceInvitesRow;
   "public.workspace_members": PublicWorkspaceMembersRow;
+  "public.workspace_profile_drafts": PublicWorkspaceProfileDraftsRow;
   "public.workspace_root_aliases": PublicWorkspaceRootAliasesRow;
   "public.workspace_transfers": PublicWorkspaceTransfersRow;
   "public.workspaces": PublicWorkspacesRow;

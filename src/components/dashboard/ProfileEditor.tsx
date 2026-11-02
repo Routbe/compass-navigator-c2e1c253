@@ -149,32 +149,56 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SaveErrorDialog } from "@/components/dashboard/SaveErrorDialog";
 import { classifySaveError, type SaveErrorInfo } from "@/lib/save-errors";
 
-export type ProfileVariant = "verified" | "alias";
+export type ProfileVariant = "verified" | "alias" | "workspace";
+
+/** Workspace canvas facts from getWorkspaceStudioProfile. */
+type WorkspaceCanvas = { workspaceId: string; name: string; slug: string; role: string; canEdit: boolean; proPlan: boolean };
 
 /**
  * ROUT Studio — the creator workspace for the public Profile Hub.
  * Four fixed tabs (links, design, analytics, settings) with a live mobile
  * preview alongside, fully decoupled from the QR generator.
  */
-export function ProfileEditor({ variant = "verified", pageMode = "profile", onPagesChange }: { variant?: ProfileVariant; pageMode?: "profile" | "tip"; onPagesChange?: (pages: { tipEnabled: boolean; handle: string }) => void } = {}) {
+export function ProfileEditor({ variant = "verified", pageMode = "profile", onPagesChange, workspaceSlug }: { variant?: ProfileVariant; pageMode?: "profile" | "tip"; onPagesChange?: (pages: { tipEnabled: boolean; handle: string }) => void; workspaceSlug?: string } = {}) {
   const { t } = useI18n();
   const { user } = useAuth();
   const { style: rawUrlStyle, save: saveUrlStylePref } = useUrlStyle();
 
   // Het aliasprofiel (`/u/<handle>`) en het rootprofiel zijn aparte records met
-  // eigen handle, thema en blokken; alleen de RPC-laag verschilt.
+  // eigen handle, thema en blokken; alleen de RPC-laag verschilt. Een workspace
+  // (`/w/<slug>`) is een derde canvas met exact dezelfde Studio.
   const alias = variant === "alias";
-  const loadProfileEditor = useServerFn(alias ? getAliasProfile : getStudioProfile);
+  const isWorkspace = variant === "workspace";
+  const [wsCanvas, setWsCanvas] = useState<WorkspaceCanvas | null>(null);
+  const loadPersonal = useServerFn(alias ? getAliasProfile : getStudioProfile);
+  const loadWorkspace = useServerFn(getWorkspaceStudioProfile);
+  const loadProfileEditor = useCallback(
+    (): Promise<unknown> => (isWorkspace ? loadWorkspace({ data: { workspaceSlug: workspaceSlug ?? "" } }) : loadPersonal()),
+    [isWorkspace, workspaceSlug, loadWorkspace, loadPersonal],
+  );
   const checkHandle = useServerFn(alias ? checkAliasHandle : checkStudioHandle);
   // Atomic mutations: each section saves on its own, bound to this canvas.
-  const space = alias ? "alias" : "verified";
+  const space = isWorkspace ? "workspace" : alias ? "alias" : "verified";
+  const canvas = isWorkspace
+    ? ({ space: "workspace", workspaceId: wsCanvas?.workspaceId } as const)
+    : ({ space: alias ? "alias" : "verified" } as const);
   const saveMeta = useServerFn(updateProfileMeta);
   const saveTheme = useServerFn(updateProfileTheme);
   const saveLinks = useServerFn(updateProfileLinks);
   /** Last state the server confirmed; the next save sends only what differs. */
   const savedSnapshot = useRef<StudioSnapshot | null>(null);
-  const publishProfile = useServerFn(alias ? publishAliasProfile : publishStudioProfile);
-  const discardDraft = useServerFn(alias ? discardAliasDraft : discardStudioDraft);
+  const publishPersonal = useServerFn(alias ? publishAliasProfile : publishStudioProfile);
+  const discardPersonal = useServerFn(alias ? discardAliasDraft : discardStudioDraft);
+  const publishWorkspace = useServerFn(publishWorkspaceProfile);
+  const discardWorkspace = useServerFn(discardWorkspaceStudioDraft);
+  const publishProfile = (args: { data: { expectedRevision: number } }) =>
+    isWorkspace
+      ? publishWorkspace({ data: { workspaceId: wsCanvas?.workspaceId ?? "", ...args.data } })
+      : publishPersonal(args);
+  const discardDraft = (args: { data: { expectedRevision: number } }) =>
+    isWorkspace
+      ? discardWorkspace({ data: { workspaceId: wsCanvas?.workspaceId ?? "", ...args.data } })
+      : discardPersonal(args);
   const loadAnalytics = useServerFn(getStudioAnalytics);
   const [tab, setTab] = useState<StudioTab>("links");
   /** Studio-modus: het profiel zelf of de steunpagina (rout.be/<handle>/tip). */

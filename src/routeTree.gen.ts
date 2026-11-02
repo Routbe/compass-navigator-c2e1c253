@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameRouteImport } from './routes/$username'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ActRouteImport } from './routes/act'
 import { Route as ApiRouteImport } from './routes/api'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BatchRouteImport } from './routes/batch'
@@ -204,6 +205,8 @@ import { Route as AuthenticatedStudioAccountRouteImport } from './routes/_authen
 import { Route as AuthenticatedStudioBookingRouteImport } from './routes/_authenticated/studio_.booking'
 import { Route as ApiBookingsIdRouteImport } from './routes/api.bookings.$id'
 import { Route as ApiAdminMailCheckRouteImport } from './routes/api_.admin.mail-check'
+import { Route as ApiAgentIdentityRouteImport } from './routes/api_.agent.identity'
+import { Route as ApiAgentLinksRouteImport } from './routes/api_.agent.links'
 import { Route as ApiAuthSplatRouteImport } from './routes/api_.auth.$'
 import { Route as ApiBunqCheckStatusRouteImport } from './routes/api_.bunq.check-status'
 import { Route as ApiPresenceNowPlayingRouteImport } from './routes/api_.presence.now-playing'
@@ -273,6 +276,7 @@ import { Route as AuthenticatedConsoleAppsNewRouteImport } from './routes/_authe
 import { Route as AuthenticatedStudioPersonalFeatureRouteImport } from './routes/_authenticated/studio_.personal.$feature'
 import { Route as AuthenticatedStudioWorkspacesNewRouteImport } from './routes/_authenticated/studio_.workspaces.new'
 import { Route as ApiPublicEmailUnsubscribeRouteImport } from './routes/api.public.email.unsubscribe'
+import { Route as ApiAgentProfileDraftRouteImport } from './routes/api_.agent.profile.draft'
 import { Route as ApiPublicAuthProvidersRouteImport } from './routes/api_.public.auth.providers'
 import { Route as ApiPublicBadgeHandleRouteImport } from './routes/api_.public.badge.$handle'
 import { Route as ApiPublicBlueskyCallbackRouteImport } from './routes/api_.public.bluesky.callback'
@@ -357,6 +361,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActRoute = ActRouteImport.update({
+  id: '/act',
+  path: '/act',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRoute = ApiRouteImport.update({
@@ -1344,6 +1353,16 @@ const ApiAdminMailCheckRoute = ApiAdminMailCheckRouteImport.update({
   path: '/api/admin/mail-check',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAgentIdentityRoute = ApiAgentIdentityRouteImport.update({
+  id: '/api_/agent/identity',
+  path: '/api/agent/identity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAgentLinksRoute = ApiAgentLinksRouteImport.update({
+  id: '/api_/agent/links',
+  path: '/api/agent/links',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api_/auth/$',
   path: '/api/auth/$',
@@ -1716,6 +1735,11 @@ const ApiPublicEmailUnsubscribeRoute =
     path: '/public/email/unsubscribe',
     getParentRoute: () => ApiRoute,
   } as any)
+const ApiAgentProfileDraftRoute = ApiAgentProfileDraftRouteImport.update({
+  id: '/api_/agent/profile/draft',
+  path: '/api/agent/profile/draft',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAuthProvidersRoute = ApiPublicAuthProvidersRouteImport.update({
   id: '/api_/public/auth/providers',
   path: '/api/public/auth/providers',
@@ -2097,6 +2121,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
   '/about': typeof AboutRouteWithChildren
+  '/act': typeof ActRoute
   '/api': typeof ApiRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/batch': typeof BatchRoute
@@ -2285,6 +2310,8 @@ export interface FileRoutesByFullPath {
   '/studio/booking': typeof AuthenticatedStudioBookingRoute
   '/api/bookings/$id': typeof ApiBookingsIdRoute
   '/api/admin/mail-check': typeof ApiAdminMailCheckRoute
+  '/api/agent/identity': typeof ApiAgentIdentityRoute
+  '/api/agent/links': typeof ApiAgentLinksRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api/presence/now-playing': typeof ApiPresenceNowPlayingRoute
@@ -2356,6 +2383,7 @@ export interface FileRoutesByFullPath {
   '/studio/personal/$feature': typeof AuthenticatedStudioPersonalFeatureRoute
   '/studio/workspaces/new': typeof AuthenticatedStudioWorkspacesNewRoute
   '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api/agent/profile/draft': typeof ApiAgentProfileDraftRoute
   '/api/public/auth/providers': typeof ApiPublicAuthProvidersRoute
   '/api/public/badge/$handle': typeof ApiPublicBadgeHandleRoute
   '/api/public/bluesky/callback': typeof ApiPublicBlueskyCallbackRoute
@@ -2427,6 +2455,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
+  '/act': typeof ActRoute
   '/api': typeof ApiRouteWithChildren
   '/batch': typeof BatchRoute
   '/card': typeof CardRoute
@@ -2600,6 +2629,8 @@ export interface FileRoutesByTo {
   '/studio/booking': typeof AuthenticatedStudioBookingRoute
   '/api/bookings/$id': typeof ApiBookingsIdRoute
   '/api/admin/mail-check': typeof ApiAdminMailCheckRoute
+  '/api/agent/identity': typeof ApiAgentIdentityRoute
+  '/api/agent/links': typeof ApiAgentLinksRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api/presence/now-playing': typeof ApiPresenceNowPlayingRoute
@@ -2670,6 +2701,7 @@ export interface FileRoutesByTo {
   '/studio/personal/$feature': typeof AuthenticatedStudioPersonalFeatureRoute
   '/studio/workspaces/new': typeof AuthenticatedStudioWorkspacesNewRoute
   '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api/agent/profile/draft': typeof ApiAgentProfileDraftRoute
   '/api/public/auth/providers': typeof ApiPublicAuthProvidersRoute
   '/api/public/badge/$handle': typeof ApiPublicBadgeHandleRoute
   '/api/public/bluesky/callback': typeof ApiPublicBlueskyCallbackRoute
@@ -2744,6 +2776,7 @@ export interface FileRoutesById {
   '/$username': typeof UsernameRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRouteWithChildren
+  '/act': typeof ActRoute
   '/api': typeof ApiRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/batch': typeof BatchRoute
@@ -2932,6 +2965,8 @@ export interface FileRoutesById {
   '/_authenticated/studio_/booking': typeof AuthenticatedStudioBookingRoute
   '/api/bookings/$id': typeof ApiBookingsIdRoute
   '/api_/admin/mail-check': typeof ApiAdminMailCheckRoute
+  '/api_/agent/identity': typeof ApiAgentIdentityRoute
+  '/api_/agent/links': typeof ApiAgentLinksRoute
   '/api_/auth/$': typeof ApiAuthSplatRoute
   '/api_/bunq/check-status': typeof ApiBunqCheckStatusRoute
   '/api_/presence/now-playing': typeof ApiPresenceNowPlayingRoute
@@ -3003,6 +3038,7 @@ export interface FileRoutesById {
   '/_authenticated/studio_/personal/$feature': typeof AuthenticatedStudioPersonalFeatureRoute
   '/_authenticated/studio_/workspaces/new': typeof AuthenticatedStudioWorkspacesNewRoute
   '/api/public/email/unsubscribe': typeof ApiPublicEmailUnsubscribeRoute
+  '/api_/agent/profile/draft': typeof ApiAgentProfileDraftRoute
   '/api_/public/auth/providers': typeof ApiPublicAuthProvidersRoute
   '/api_/public/badge/$handle': typeof ApiPublicBadgeHandleRoute
   '/api_/public/bluesky/callback': typeof ApiPublicBlueskyCallbackRoute
@@ -3077,6 +3113,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$username'
     | '/about'
+    | '/act'
     | '/api'
     | '/auth'
     | '/batch'
@@ -3265,6 +3302,8 @@ export interface FileRouteTypes {
     | '/studio/booking'
     | '/api/bookings/$id'
     | '/api/admin/mail-check'
+    | '/api/agent/identity'
+    | '/api/agent/links'
     | '/api/auth/$'
     | '/api/bunq/check-status'
     | '/api/presence/now-playing'
@@ -3336,6 +3375,7 @@ export interface FileRouteTypes {
     | '/studio/personal/$feature'
     | '/studio/workspaces/new'
     | '/api/public/email/unsubscribe'
+    | '/api/agent/profile/draft'
     | '/api/public/auth/providers'
     | '/api/public/badge/$handle'
     | '/api/public/bluesky/callback'
@@ -3407,6 +3447,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$username'
+    | '/act'
     | '/api'
     | '/batch'
     | '/card'
@@ -3580,6 +3621,8 @@ export interface FileRouteTypes {
     | '/studio/booking'
     | '/api/bookings/$id'
     | '/api/admin/mail-check'
+    | '/api/agent/identity'
+    | '/api/agent/links'
     | '/api/auth/$'
     | '/api/bunq/check-status'
     | '/api/presence/now-playing'
@@ -3650,6 +3693,7 @@ export interface FileRouteTypes {
     | '/studio/personal/$feature'
     | '/studio/workspaces/new'
     | '/api/public/email/unsubscribe'
+    | '/api/agent/profile/draft'
     | '/api/public/auth/providers'
     | '/api/public/badge/$handle'
     | '/api/public/bluesky/callback'
@@ -3723,6 +3767,7 @@ export interface FileRouteTypes {
     | '/$username'
     | '/_authenticated'
     | '/about'
+    | '/act'
     | '/api'
     | '/auth'
     | '/batch'
@@ -3911,6 +3956,8 @@ export interface FileRouteTypes {
     | '/_authenticated/studio_/booking'
     | '/api/bookings/$id'
     | '/api_/admin/mail-check'
+    | '/api_/agent/identity'
+    | '/api_/agent/links'
     | '/api_/auth/$'
     | '/api_/bunq/check-status'
     | '/api_/presence/now-playing'
@@ -3982,6 +4029,7 @@ export interface FileRouteTypes {
     | '/_authenticated/studio_/personal/$feature'
     | '/_authenticated/studio_/workspaces/new'
     | '/api/public/email/unsubscribe'
+    | '/api_/agent/profile/draft'
     | '/api_/public/auth/providers'
     | '/api_/public/badge/$handle'
     | '/api_/public/bluesky/callback'
@@ -4056,6 +4104,7 @@ export interface RootRouteChildren {
   UsernameRoute: typeof UsernameRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRouteWithChildren
+  ActRoute: typeof ActRoute
   ApiRoute: typeof ApiRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BatchRoute: typeof BatchRoute
@@ -4137,6 +4186,8 @@ export interface RootRouteChildren {
   WSlugRoute: typeof WSlugRoute
   WorkspaceTransferTokenRoute: typeof WorkspaceTransferTokenRoute
   ApiAdminMailCheckRoute: typeof ApiAdminMailCheckRoute
+  ApiAgentIdentityRoute: typeof ApiAgentIdentityRoute
+  ApiAgentLinksRoute: typeof ApiAgentLinksRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiBunqCheckStatusRoute: typeof ApiBunqCheckStatusRoute
   ApiPresenceNowPlayingRoute: typeof ApiPresenceNowPlayingRoute
@@ -4172,6 +4223,7 @@ export interface RootRouteChildren {
   UUsernameLiveRoute: typeof UUsernameLiveRoute
   UUsernameTipRoute: typeof UUsernameTipRoute
   WSlugFeedbackRoute: typeof WSlugFeedbackRoute
+  ApiAgentProfileDraftRoute: typeof ApiAgentProfileDraftRoute
   ApiPublicAuthProvidersRoute: typeof ApiPublicAuthProvidersRoute
   ApiPublicBadgeHandleRoute: typeof ApiPublicBadgeHandleRoute
   ApiPublicBlueskyCallbackRoute: typeof ApiPublicBlueskyCallbackRoute
@@ -4248,6 +4300,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/act': {
+      id: '/act'
+      path: '/act'
+      fullPath: '/act'
+      preLoaderRoute: typeof ActRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api': {
@@ -5587,6 +5646,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminMailCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api_/agent/identity': {
+      id: '/api_/agent/identity'
+      path: '/api/agent/identity'
+      fullPath: '/api/agent/identity'
+      preLoaderRoute: typeof ApiAgentIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api_/agent/links': {
+      id: '/api_/agent/links'
+      path: '/api/agent/links'
+      fullPath: '/api/agent/links'
+      preLoaderRoute: typeof ApiAgentLinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api_/auth/$': {
       id: '/api_/auth/$'
       path: '/api/auth/$'
@@ -6069,6 +6142,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/email/unsubscribe'
       preLoaderRoute: typeof ApiPublicEmailUnsubscribeRouteImport
       parentRoute: typeof ApiRoute
+    }
+    '/api_/agent/profile/draft': {
+      id: '/api_/agent/profile/draft'
+      path: '/api/agent/profile/draft'
+      fullPath: '/api/agent/profile/draft'
+      preLoaderRoute: typeof ApiAgentProfileDraftRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api_/public/auth/providers': {
       id: '/api_/public/auth/providers'
@@ -7090,6 +7170,7 @@ const rootRouteChildren: RootRouteChildren = {
   UsernameRoute: UsernameRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRouteWithChildren,
+  ActRoute: ActRoute,
   ApiRoute: ApiRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BatchRoute: BatchRoute,
@@ -7171,6 +7252,8 @@ const rootRouteChildren: RootRouteChildren = {
   WSlugRoute: WSlugRoute,
   WorkspaceTransferTokenRoute: WorkspaceTransferTokenRoute,
   ApiAdminMailCheckRoute: ApiAdminMailCheckRoute,
+  ApiAgentIdentityRoute: ApiAgentIdentityRoute,
+  ApiAgentLinksRoute: ApiAgentLinksRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiBunqCheckStatusRoute: ApiBunqCheckStatusRoute,
   ApiPresenceNowPlayingRoute: ApiPresenceNowPlayingRoute,
@@ -7206,6 +7289,7 @@ const rootRouteChildren: RootRouteChildren = {
   UUsernameLiveRoute: UUsernameLiveRoute,
   UUsernameTipRoute: UUsernameTipRoute,
   WSlugFeedbackRoute: WSlugFeedbackRoute,
+  ApiAgentProfileDraftRoute: ApiAgentProfileDraftRoute,
   ApiPublicAuthProvidersRoute: ApiPublicAuthProvidersRoute,
   ApiPublicBadgeHandleRoute: ApiPublicBadgeHandleRoute,
   ApiPublicBlueskyCallbackRoute: ApiPublicBlueskyCallbackRoute,

@@ -1668,13 +1668,6 @@ export interface PublicUserBadgesRow {
   "serial_number": number | null;
 }
 
-export interface PublicUserBirthdatesRow {
-  "user_id": string;
-  "birthdate": string | Date;
-  "source": string;
-  "updated_at": string | Date;
-}
-
 export interface PublicUserCalendarFeedsRow {
   "user_id": string;
   "url": string;
@@ -2219,7 +2212,6 @@ export interface DbTables {
   "public.upload_rate_limits": PublicUploadRateLimitsRow;
   "public.user_assets": PublicUserAssetsRow;
   "public.user_badges": PublicUserBadgesRow;
-  "public.user_birthdates": PublicUserBirthdatesRow;
   "public.user_calendar_feeds": PublicUserCalendarFeedsRow;
   "public.user_connected_apps_visibility": PublicUserConnectedAppsVisibilityRow;
   "public.user_custom_badges": PublicUserCustomBadgesRow;

@@ -419,6 +419,15 @@ export function ApiKeys() {
           Keys authenticate both the REST API and the MCP server. We store a hash only — the full
           key is shown once, right after you create it.
         </p>
+        <div className="mt-3 rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+          <p className="font-semibold text-foreground">AI agents never get a static key</p>
+          <p className="mt-1">
+            Agents connect through <a className="underline" href="/connect">/connect</a> and receive tokens that expire
+            within one hour, with only the scopes you approve: <code>assets:write</code>, <code>profile:draft</code>,{" "}
+            <code>identity:read_public</code>. Revoke an agent at any time under Connected apps. Scopes for an agent app are
+            set in the Developer Console → Scopes.
+          </p>
+        </div>
 
         {/* Which key belongs where: the single most common cause of leaked
             credentials is a backend key pasted into browser code. */}

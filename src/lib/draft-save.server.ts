@@ -41,6 +41,26 @@ export async function runDraftSave(
   }
 }
 
+/** Runner for the atomic section mutations; same structured-error contract. */
+export async function runDraftPatch(
+  userId: string,
+  workspaceId: string | null,
+  space: ProfileSpace,
+  patch: { fields?: Record<string, unknown>; prefs?: Record<string, unknown>; dropPrefs?: string[] },
+  endpoint: string,
+) {
+  const { patchProfileDraft } = await import("./profile-drafts.server");
+  try {
+    const meta = await patchProfileDraft(userId, space, patch);
+    return { ok: true as const, meta, error: null };
+  } catch (raw) {
+    const error = classifySaveError(raw);
+    console.error(`[draft-patch] ${space} ${endpoint} ${error.code}: ${error.detail}`);
+    if (isCriticalSaveError(error.code)) void autoReport(raw, error, userId, workspaceId, endpoint);
+    return { ok: false as const, meta: null, error };
+  }
+}
+
 async function autoReport(raw: unknown, error: SaveErrorInfo, userId: string, workspaceId: string | null, endpoint: string) {
   try {
     const { reportError } = await import("@/lib/email/error-reporter.server");

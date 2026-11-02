@@ -13,6 +13,30 @@ export const DRAFT_DATA_IMAGE_MAX = 200_000;
 
 type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 
+/**
+ * Canonical JSON boundary: the RPC transport keeps `undefined`, but the
+ * database stores JSON. Apply JSON semantics before validating — `undefined`
+ * keys disappear, `undefined`/non-finite array items become `null`, NaN and
+ * Infinity become `null`. Root cause of the 422 on `displayPrefs.qrSettings`:
+ * normalized QR styles carry optional keys set to `undefined`.
+ */
+export function toDraftJson(value: unknown): Json | undefined {
+  if (value === null) return null;
+  if (typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (Array.isArray(value)) return value.map((item) => toDraftJson(item) ?? null);
+  if (typeof value === "object") {
+    if (value instanceof Date) return value.toISOString();
+    const out: Record<string, Json> = {};
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      const json = toDraftJson(item);
+      if (json !== undefined) out[key] = json;
+    }
+    return out;
+  }
+  return undefined;
+}
+
 function jsonAt(depth: number): z.ZodType<Json> {
   // Embedded QR logos (data:image base64) may be up to 200k chars, matching normalizeQrSettings;
   // all other strings stay at 20k. The total draft size cap still applies.
@@ -27,6 +51,9 @@ function jsonAt(depth: number): z.ZodType<Json> {
   ) as z.ZodType<Json>;
 }
 
-export const draftJsonRecordSchema = z
-  .record(z.string().max(200), jsonAt(1))
-  .refine((v) => JSON.stringify(v).length <= DRAFT_JSON_MAX_BYTES, { message: "validation: draft too large" });
+export const draftJsonRecordSchema = z.preprocess(
+  toDraftJson,
+  z
+    .record(z.string().max(200), jsonAt(1))
+    .refine((v) => JSON.stringify(v).length <= DRAFT_JSON_MAX_BYTES, { message: "validation: draft too large" }),
+);

@@ -42,7 +42,7 @@
 - [ ] Neon link in Lovable still logs in as neondb_owner (DATABASE_URL is only used where no Neon link exists, e.g. Vercel) — waits on the user replacing the Neon connection string
 - [x] Sign-up: required terms/privacy/16+ checkbox (server refuses without it); implicit notice above social buttons
 - [x] Remove birth-date fields (vCard block, verification requirement, birthdate dialog)
-- [ ] Drop the empty user_birthdates table — waits on the user's confirmation
+- [x] Drop the empty user_birthdates table (0161, merge routine cleaned first)
 - [x] user_verified_claims table (0159, rout_app read-only) + Sovereign Trust widget on /dashboard/identity
 - [x] OIDC scopes verify_human / verify_18_plus prepared (boolean payload, not yet issued)
 - [x] Final check: tsgo 0, 1,456 tests, 59 internal links on 12 key pages OK

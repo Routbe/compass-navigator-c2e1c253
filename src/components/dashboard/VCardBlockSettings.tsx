@@ -84,10 +84,6 @@ export function VCardBlockSettings({
         <span className={lbl}>Adres (optioneel)</span>
         <Input className={field} maxLength={200} placeholder="Straat 1, 1000 Brussel" value={c.address} onChange={(e) => update({ address: e.target.value })} />
       </label>
-      <label className="block space-y-1">
-        <span className={lbl}>Verjaardag (optioneel)</span>
-        <Input className={field} type="date" value={c.birthday} onChange={(e) => update({ birthday: e.target.value })} />
-      </label>
 
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-2">

@@ -4,7 +4,7 @@ import { buildVCard, parseVCardConfig } from "./vcard";
 const base = { handle: "jona", displayName: "Jona Test", profileUrl: "https://rout.be/jona" };
 
 describe("vCard component", () => {
-  it("writes job title, categorized phones, address and birthday", () => {
+  it("writes job title, categorized phones and address, never a birthday", () => {
     const v = buildVCard({
       ...base,
       title: "Founder",
@@ -17,7 +17,7 @@ describe("vCard component", () => {
     expect(v).toContain("TEL;TYPE=CELL:+32 470 00 00 00");
     expect(v).toContain("TEL;TYPE=HOME:011");
     expect(v).toContain("ADR;TYPE=WORK:;;Grote Markt 1\\, Brussel;;;;");
-    expect(v).toContain("BDAY:1990-05-04");
+    expect(v).not.toContain("BDAY");
   });
   it("uses the custom note over the bio", () => {
     expect(buildVCard({ ...base, note: "Met via ROUT", bio: "bio" })).toContain("NOTE:Met via ROUT");
@@ -28,6 +28,6 @@ describe("vCard component", () => {
   });
   it("parses garbage safely", () => {
     expect(parseVCardConfig("not json").phones).toEqual([]);
-    expect(parseVCardConfig(JSON.stringify({ birthday: "05/04/1990" })).birthday).toBe("");
+    expect("birthday" in parseVCardConfig(JSON.stringify({ birthday: "1990-05-04" }))).toBe(false);
   });
 });

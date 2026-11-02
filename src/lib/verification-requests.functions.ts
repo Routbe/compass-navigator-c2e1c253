@@ -22,10 +22,6 @@ export const requestBusinessVerification = createServerFn({ method: "POST" })
   .middleware([requireAuth])
   .inputValidator((data: unknown) => businessSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const { hasBirthdate } = await import("./birthdate.server");
-    if (!(await hasBirthdate(context.userId))) {
-      return { ok: false as const, reason: "birthdate_required" };
-    }
     const { submitBusinessRequest } = await import("./verification-requests.server");
     const res = await submitBusinessRequest(context.userId, data);
     const id = (res as { request?: { id?: unknown } | null }).request?.id;
@@ -53,10 +49,6 @@ export const requestInfluencerVerification = createServerFn({ method: "POST" })
   .middleware([requireAuth])
   .inputValidator((data: unknown) => influencerSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const { hasBirthdate } = await import("./birthdate.server");
-    if (!(await hasBirthdate(context.userId))) {
-      return { ok: false as const, reason: "birthdate_required" };
-    }
     const { submitInfluencerRequest } = await import("./verification-requests.server");
     const res = await submitInfluencerRequest(context.userId, data);
     const id = res.ok ? (res.request as { id?: unknown } | null)?.id : null;

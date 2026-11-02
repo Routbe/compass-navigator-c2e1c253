@@ -5,6 +5,7 @@ export type JsonValue = string | number | boolean | null | JsonValue[] | { [key:
 
 export type PublicAppCredentialType = "badge" | "certificate" | "diploma";
 export type PublicAppRole = "admin" | "moderator" | "user";
+export type PublicClaimVerificationProvider = "none" | "itsme" | "eidas";
 export type PublicIdentityProvider = "w_identity" | "didit" | "manual";
 export type PublicRootRedirectKind = "profile_hub" | "custom_url" | "rout_main" | "none";
 export type PublicWorkspaceRole = "owner" | "admin" | "developer" | "editor" | "viewer";
@@ -1882,6 +1883,15 @@ export interface PublicUserSnapchatRow {
   "updated_at": string | Date;
 }
 
+export interface PublicUserVerifiedClaimsRow {
+  "user_id": string;
+  "is_verified_human": boolean;
+  "is_over_18": boolean;
+  "verification_provider": PublicClaimVerificationProvider;
+  "verified_at": string | Date | null;
+  "updated_at": string | Date;
+}
+
 export interface PublicUsersRow {
   "id": string;
   "email": string;
@@ -2227,6 +2237,7 @@ export interface DbTables {
   "public.user_roles": PublicUserRolesRow;
   "public.user_sessions": PublicUserSessionsRow;
   "public.user_snapchat": PublicUserSnapchatRow;
+  "public.user_verified_claims": PublicUserVerifiedClaimsRow;
   "public.users": PublicUsersRow;
   "public.verification_payments": PublicVerificationPaymentsRow;
   "public.verified_identities": PublicVerifiedIdentitiesRow;

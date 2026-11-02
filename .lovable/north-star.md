@@ -6,4 +6,4 @@ Gebruikers hebben volledige, soevereine controle over hun digitale identiteit, i
 
 ## Maatstaf
 
-Het aantal actieve Identity Relays, succesvolle Login met ROUT-sessies, en opgezette Profiel Hubs per week.
+Leden die met Login met ROUT bij een externe app inloggen, per week

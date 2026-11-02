@@ -38,7 +38,7 @@ beforeAll(async () => {
     JSON.stringify(priv),
     JSON.stringify({ ...pub, kid: "legacy" }),
   ]);
-});
+}, 60_000); // PGlite start-up is slow when the whole suite runs in parallel.
 
 describe("signing keys in the database", () => {
   it("keeps signing with a legacy key until it is sealed explicitly", async () => {

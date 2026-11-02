@@ -17,35 +17,52 @@ import { optionalProfileImageUrlSchema } from "./profile-image-url";
 
 export const PROFILE_SPACES = ["verified", "alias"] as const;
 export type ProfileSpaceId = (typeof PROFILE_SPACES)[number];
+/** Canvases the Studio engine can write: the two personal ones, or a workspace (by `workspaceId`). */
+export const STUDIO_CANVASES = [...PROFILE_SPACES, "workspace"] as const;
+export type StudioCanvas = (typeof STUDIO_CANVASES)[number];
 
 type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 
-const spaceSchema = z.enum(PROFILE_SPACES);
+const spaceSchema = z.enum(STUDIO_CANVASES);
 const nullableText = (max: number) => z.string().trim().max(max).nullable().optional();
+const workspaceIdSchema = z.string().uuid().optional();
+
+/** A workspace canvas always names its workspace; a personal canvas never does. */
+function canvasTarget(value: { space: StudioCanvas; workspaceId?: string }, ctx: z.RefinementCtx) {
+  if (value.space === "workspace" && !value.workspaceId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["workspaceId"], message: "required for the workspace canvas" });
+  }
+  if (value.space !== "workspace" && value.workspaceId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["workspaceId"], message: "only allowed for the workspace canvas" });
+  }
+}
 
 export const profileMetaPatchSchema = z.strictObject({
   space: spaceSchema,
+  workspaceId: workspaceIdSchema,
   username: z.string().trim().min(1).max(60).optional(),
   displayName: nullableText(120),
   tagline: nullableText(240),
   avatarUrl: optionalProfileImageUrlSchema,
   faviconUrl: optionalProfileImageUrlSchema,
-});
+}).superRefine(canvasTarget);
 
 export const profileThemePatchSchema = z.strictObject({
   space: spaceSchema,
+  workspaceId: workspaceIdSchema,
   theme: z.string().trim().min(1).max(40).optional(),
   cardStyle: z.string().trim().min(1).max(40).optional(),
   /** Only the display-pref keys that changed; merged key by key on the server. */
   prefs: draftJsonRecordSchema.optional().default({}),
   /** Display-pref keys the member removed. */
   dropPrefs: z.array(z.string().min(1).max(200)).max(200).optional().default([]),
-});
+}).superRefine(canvasTarget);
 
 export const profileLinksPatchSchema = z.strictObject({
   space: spaceSchema,
+  workspaceId: workspaceIdSchema,
   blocks: z.preprocess(toDraftJson, z.array(draftJsonRecordSchema).max(100)),
-});
+}).superRefine(canvasTarget);
 
 export type ProfileMetaPatch = z.input<typeof profileMetaPatchSchema>;
 export type ProfileThemePatch = z.input<typeof profileThemePatchSchema>;

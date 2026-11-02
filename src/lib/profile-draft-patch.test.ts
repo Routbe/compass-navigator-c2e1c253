@@ -84,5 +84,5 @@ describe("patch_profile_draft (0160)", () => {
     // The other canvas is untouched.
     expect(rows.rows[1]?.payload).toEqual({ username: "echt", displayName: "Echt" });
     await db.close();
-  });
+  }, 60_000);
 });

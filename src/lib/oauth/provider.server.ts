@@ -620,10 +620,11 @@ export async function exchangeAuthorizationCode(input: {
     // Zonder PKCE enkel voor vertrouwelijke apps die PKCE expliciet uitzetten.
     throw new OAuthError("invalid_grant", "PKCE is verplicht voor deze app.");
   }
-  const ttl = Math.min(Math.max(client.accessTokenTtl, TOKEN_TTL_MIN), TOKEN_TTL_MAX);
-
   const userId = String(row["user_id"]);
   const scopes = (row["scopes"] as string[] | null) ?? [];
+  // Agent grants are ephemeral: at most one hour, whatever the client asks for.
+  const { agentTokenTtl } = await import("@/lib/agent/agent-scopes");
+  const ttl = agentTokenTtl(Math.min(Math.max(client.accessTokenTtl, TOKEN_TTL_MIN), TOKEN_TTL_MAX), scopes);
   const claims = await identityClaims(userId, scopes, { handleSync: client.handleSyncEnabled, clientId: client.clientId });
   // Rich Identity: enkel als de app het aanzette én de gebruiker het aanvinkte.
   if (row["rich_identity"] && client.richIdentityEnabled) {

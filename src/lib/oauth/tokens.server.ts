@@ -8,7 +8,6 @@ export async function exchangeRefreshToken(input: { token: string; clientId: str
   const row = rows[0];
   if (!row || row["result"] !== "ok") throw new OAuthError("invalid_grant", "Refresh token is ongeldig of hergebruikt.");
   const now = Math.floor(Date.now()/1000);
-  const ttl = client.accessTokenTtl;
   // OIDC: a refresh request may narrow the scope set, never widen it or name
   // scopes outside the whitelist — anything else is invalid_scope (Cluster C).
   const { resolveRefreshScopes } = await import("./scope-rules");
@@ -16,6 +15,9 @@ export async function exchangeRefreshToken(input: { token: string; clientId: str
   const resolved = resolveRefreshScopes(requested, row["scopes"] as string[]);
   if (!resolved.ok) throw new OAuthError("invalid_scope", `Deze scope is niet toegekend: ${resolved.unknown}.`);
   const scopes = resolved.scopes;
+  // Agent grants are ephemeral: at most one hour per access token.
+  const { agentTokenTtl } = await import("@/lib/agent/agent-scopes");
+  const ttl = agentTokenTtl(client.accessTokenTtl, scopes);
   const token = await signJwt({ iss: issuer(), sub: row["subject"], aud: client.clientId, iat: now, exp: now+ttl, scope: scopes.join(" "), token_use: "access", jti: crypto.randomUUID() });
   const claims = await identityClaims(String(row["user_id"]), scopes, { handleSync: client.handleSyncEnabled, clientId: client.clientId });
   const idToken = await signJwt({ iss: issuer(), sub: row["subject"], aud: client.clientId, iat: now, exp: now+ttl, token_use: "id",

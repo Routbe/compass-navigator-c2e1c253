@@ -210,5 +210,8 @@
   "auth.signupConsent.required": "Setze das Häkchen, um dein Konto zu erstellen.",
   "auth.signupConsent.implicitBefore": "Mit der Anmeldung akzeptierst du die",
   "auth.signupConsent.termsShort": "Bedingungen",
-  "auth.signupConsent.implicitAfter": "und bestätigst, 16+ zu sein."
+  "auth.signupConsent.implicitAfter": "und bestätigst, 16+ zu sein.",
+  "auth.scope.agentAssets": "QR-Codes und Kurzlinks für dich erstellen (im Rahmen deines Tarifs)",
+  "auth.scope.agentDraft": "Profilentwürfe vorbereiten — veröffentlichen tust du immer selbst",
+  "auth.scope.agentIdentity": "Sehen, ob du ein verifizierter Mensch bist (nie deine Relays oder deinen amtlichen Namen)"
 }

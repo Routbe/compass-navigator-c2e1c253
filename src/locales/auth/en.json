@@ -210,5 +210,8 @@
   "auth.signupConsent.required": "Tick the box to create your account.",
   "auth.signupConsent.implicitBefore": "By signing in you agree to the",
   "auth.signupConsent.termsShort": "Terms",
-  "auth.signupConsent.implicitAfter": "and confirm you are 16+."
+  "auth.signupConsent.implicitAfter": "and confirm you are 16+.",
+  "auth.scope.agentAssets": "Create QR codes and short links for you (within your plan)",
+  "auth.scope.agentDraft": "Prepare profile drafts — you always publish yourself",
+  "auth.scope.agentIdentity": "See whether you are a verified human (never your relays or legal name)"
 }

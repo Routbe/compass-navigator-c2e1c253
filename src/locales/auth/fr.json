@@ -210,5 +210,8 @@
   "auth.signupConsent.required": "Cochez la case pour créer votre compte.",
   "auth.signupConsent.implicitBefore": "En vous connectant, vous acceptez les",
   "auth.signupConsent.termsShort": "Conditions",
-  "auth.signupConsent.implicitAfter": "et confirmez avoir 16 ans ou plus."
+  "auth.signupConsent.implicitAfter": "et confirmez avoir 16 ans ou plus.",
+  "auth.scope.agentAssets": "Créer des codes QR et des liens courts pour vous (dans votre forfait)",
+  "auth.scope.agentDraft": "Préparer des brouillons de profil — vous publiez toujours vous-même",
+  "auth.scope.agentIdentity": "Voir si vous êtes un humain vérifié (jamais vos relais ni votre nom légal)"
 }

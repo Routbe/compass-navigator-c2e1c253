@@ -210,5 +210,8 @@
   "auth.signupConsent.required": "Vink het vakje aan om je account aan te maken.",
   "auth.signupConsent.implicitBefore": "Door in te loggen ga je akkoord met de",
   "auth.signupConsent.termsShort": "Voorwaarden",
-  "auth.signupConsent.implicitAfter": "en bevestig je 16+ te zijn."
+  "auth.signupConsent.implicitAfter": "en bevestig je 16+ te zijn.",
+  "auth.scope.agentAssets": "QR-codes en korte links voor je maken (binnen je abonnement)",
+  "auth.scope.agentDraft": "Profielontwerpen klaarzetten — publiceren doe je altijd zelf",
+  "auth.scope.agentIdentity": "Zien of je een geverifieerde mens bent (nooit je relays of wettelijke naam)"
 }

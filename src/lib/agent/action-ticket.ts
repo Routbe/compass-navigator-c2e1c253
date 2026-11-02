@@ -8,7 +8,7 @@
 export const ACTION_TICKET_TTL_S = 15 * 60;
 
 /** Only these in-app destinations can be reached through an action ticket. */
-const ALLOWED_TARGETS = [/^\/dashboard(\/[a-z0-9/_-]*)?(\?[a-z0-9=&_-]*)?$/i, /^\/studio(\?[a-z0-9=&_-]*)?$/i];
+const ALLOWED_TARGETS = [/^\/dashboard(\/[a-z0-9/_-]*)?(\?[a-z0-9=&_-]*)?$/i, /^\/studio(\/account)?(\?[a-z0-9=&_-]*)?$/i];
 
 export function isAllowedActionTarget(path: string): boolean {
   return ALLOWED_TARGETS.some((re) => re.test(path));

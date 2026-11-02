@@ -26,6 +26,8 @@ export const Route = createFileRoute("/api_/agent/links")({
           const issue = parsed.error.issues[0];
           return agentError(400, "invalid_request", `${issue?.path.join(".") || "body"}: ${issue?.message ?? "invalid"}`);
         }
+        const { shortLinkTargetBlocked } = await import("@/lib/short-link-target");
+        if (shortLinkTargetBlocked(parsed.data.target_url)) return agentError(400, "invalid_request", "This target URL is not allowed.");
         try {
           const { withDbContext } = await import("@/lib/neon");
           return await withDbContext({ userId: agent.userId, workspaceId: null }, async () => {

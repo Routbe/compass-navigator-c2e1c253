@@ -119,8 +119,8 @@ export async function patchProfileDraft(
   patch: { fields?: Record<string, unknown>; prefs?: Record<string, unknown>; dropPrefs?: string[] },
 ): Promise<DraftMeta> {
   const rows = (await sql.query(
-    `select * from public.patch_profile_draft($1::uuid, $2::text, $3::jsonb, $4::jsonb, $5::text[])`,
-    [userId, space, JSON.stringify(patch.fields ?? {}), JSON.stringify(patch.prefs ?? {}), patch.dropPrefs ?? []],
+    `select * from public.patch_profile_draft($1::uuid, $2::text, $3::jsonb, $4::jsonb, array(select jsonb_array_elements_text($5::jsonb)))`,
+    [userId, space, JSON.stringify(patch.fields ?? {}), JSON.stringify(patch.prefs ?? {}), JSON.stringify(patch.dropPrefs ?? [])],
   )) as Row[];
   const row = rows[0];
   if (!row) throw new Error("draft_save_failed");

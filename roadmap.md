@@ -48,12 +48,12 @@
 - [x] Final check: tsgo 0, 1,456 tests, 59 internal links on 12 key pages OK
 
 ## Agentic web — phase 1 (now)
-- [ ] Agent scopes assets:write, profile:draft, identity:read_public (never identity_relays) only via short-lived (≤1 h) OAuth access tokens; static API keys can never carry them; validated on every request
-- [ ] Standard agent responses: human_action_required (safe temporary action_url) and 402 upgrade (upgrade_url + reason)
-- [ ] /llms.txt and /.well-known/openapi.json
-- [ ] Headless Profile Hub: JSON for Accept: application/json / AI user agents on /<handle> and /u/<alias>
-- [ ] /connect reverse-handshake entry onto the existing OIDC consent (/oauth/authorize)
-- [ ] GET /api/badge/verify: verified human + requesting origin matches a registered domain
+- [x] Agent scopes assets:write, profile:draft, identity:read_public (never identity_relays) only via short-lived (≤1 h) OAuth access tokens; static API keys can never carry them; validated on every request
+- [x] Standard agent responses: human_action_required (safe temporary action_url) and 402 upgrade (upgrade_url + reason)
+- [x] /llms.txt and /.well-known/openapi.json
+- [x] Headless Profile Hub: JSON for Accept: application/json / AI user agents on /<handle> and /u/<alias>
+- [x] /connect reverse-handshake entry onto the existing OIDC consent (/oauth/authorize)
+- [x] GET /api/badge/verify: verified human + requesting origin matches a registered domain
 
 ## Agentic web — phase 2 (after phase 1)
 - [ ] Agent-provisioned workspaces: no owner, claim token only, NO email (agent delivers the link), hard delete after 48 h incl. OAuth apps, QR codes, drafts

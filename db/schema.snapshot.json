@@ -2126,6 +2126,16 @@
           "check": "true"
         },
         {
+          "name": "rout_public_read",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "SELECT",
+          "using": "(enabled = true)",
+          "check": null
+        },
+        {
           "name": "rout_scope",
           "permissive": true,
           "roles": [
@@ -6516,6 +6526,16 @@
           "cmd": "ALL",
           "using": "true",
           "check": "true"
+        },
+        {
+          "name": "rout_public_verified",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "SELECT",
+          "using": "(status = 'verified'::text)",
+          "check": null
         },
         {
           "name": "rout_scope",

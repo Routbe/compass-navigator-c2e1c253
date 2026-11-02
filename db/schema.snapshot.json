@@ -1971,6 +1971,166 @@
     },
     {
       "schema": "public",
+      "name": "agent_workspace_claims",
+      "columns": [
+        {
+          "name": "workspace_id",
+          "type": "uuid",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "client_id",
+          "type": "text",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "requested_by",
+          "type": "uuid",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "token_hash",
+          "type": "text",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "claimed_at",
+          "type": "timestamp with time zone",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "uuid",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "bot_revoked_at",
+          "type": "timestamp with time zone",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "agent_workspace_claims_48h",
+          "kind": "c",
+          "def": "CHECK ((expires_at = (created_at + '48:00:00'::interval)))"
+        },
+        {
+          "name": "agent_workspace_claims_claim_order",
+          "kind": "c",
+          "def": "CHECK (((claimed_by IS NULL) OR (claimed_at IS NOT NULL)))"
+        },
+        {
+          "name": "agent_workspace_claims_claimed_by_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (claimed_by) REFERENCES users(id) ON DELETE SET NULL"
+        },
+        {
+          "name": "agent_workspace_claims_client",
+          "kind": "c",
+          "def": "CHECK (((char_length(client_id) >= 1) AND (char_length(client_id) <= 200)))"
+        },
+        {
+          "name": "agent_workspace_claims_hash",
+          "kind": "c",
+          "def": "CHECK ((token_hash ~ '^[0-9a-f]{64}$'::text))"
+        },
+        {
+          "name": "agent_workspace_claims_pkey",
+          "kind": "p",
+          "def": "PRIMARY KEY (workspace_id)"
+        },
+        {
+          "name": "agent_workspace_claims_requested_by_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (requested_by) REFERENCES users(id) ON DELETE SET NULL"
+        },
+        {
+          "name": "agent_workspace_claims_revoke_order",
+          "kind": "c",
+          "def": "CHECK (((bot_revoked_at IS NULL) OR (claimed_at IS NOT NULL)))"
+        },
+        {
+          "name": "agent_workspace_claims_token_hash_key",
+          "kind": "u",
+          "def": "UNIQUE (token_hash)"
+        },
+        {
+          "name": "agent_workspace_claims_workspace_id_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE"
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX agent_workspace_claims_open_expiry_idx ON public.agent_workspace_claims USING btree (expires_at) WHERE (claimed_at IS NULL)",
+        "CREATE INDEX agent_workspace_claims_open_requester_idx ON public.agent_workspace_claims USING btree (requested_by) WHERE (claimed_at IS NULL)"
+      ],
+      "triggers": [],
+      "rls": true,
+      "forceRls": false,
+      "policies": [
+        {
+          "name": "rout_admin_revoke",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "UPDATE",
+          "using": "((claimed_at IS NOT NULL) AND (rout_workspace_role(workspace_id) = ANY (ARRAY['owner'::text, 'admin'::text])))",
+          "check": "((claimed_at IS NOT NULL) AND (rout_workspace_role(workspace_id) = ANY (ARRAY['owner'::text, 'admin'::text])))"
+        },
+        {
+          "name": "rout_member_read",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "SELECT",
+          "using": "((claimed_at IS NOT NULL) AND rout_is_workspace_member(workspace_id))",
+          "check": null
+        }
+      ],
+      "grants": {}
+    },
+    {
+      "schema": "public",
       "name": "alias_profiles",
       "columns": [
         {
@@ -21124,6 +21284,146 @@
     },
     {
       "schema": "public",
+      "name": "workspace_profile_drafts",
+      "columns": [
+        {
+          "name": "workspace_id",
+          "type": "uuid",
+          "notNull": true,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "notNull": true,
+          "default": "'{}'::jsonb",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "revision",
+          "type": "bigint",
+          "notNull": true,
+          "default": "1",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "published_revision",
+          "type": "bigint",
+          "notNull": true,
+          "default": "0",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "notNull": true,
+          "default": "now()",
+          "identity": null,
+          "generated": null
+        },
+        {
+          "name": "published_at",
+          "type": "timestamp with time zone",
+          "notNull": false,
+          "default": null,
+          "identity": null,
+          "generated": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "workspace_profile_drafts_payload_object",
+          "kind": "c",
+          "def": "CHECK ((jsonb_typeof(payload) = 'object'::text))"
+        },
+        {
+          "name": "workspace_profile_drafts_pkey",
+          "kind": "p",
+          "def": "PRIMARY KEY (workspace_id)"
+        },
+        {
+          "name": "workspace_profile_drafts_revisions",
+          "kind": "c",
+          "def": "CHECK (((revision >= 1) AND ((published_revision >= 0) AND (published_revision <= revision))))"
+        },
+        {
+          "name": "workspace_profile_drafts_updated_by_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL"
+        },
+        {
+          "name": "workspace_profile_drafts_workspace_id_fkey",
+          "kind": "f",
+          "def": "FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE"
+        }
+      ],
+      "indexes": [],
+      "triggers": [],
+      "rls": true,
+      "forceRls": false,
+      "policies": [
+        {
+          "name": "rout_editor_insert",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "INSERT",
+          "using": null,
+          "check": "(rout_workspace_role(workspace_id) = ANY (ARRAY['owner'::text, 'admin'::text, 'editor'::text]))"
+        },
+        {
+          "name": "rout_editor_update",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "UPDATE",
+          "using": "(rout_workspace_role(workspace_id) = ANY (ARRAY['owner'::text, 'admin'::text, 'editor'::text]))",
+          "check": "(rout_workspace_role(workspace_id) = ANY (ARRAY['owner'::text, 'admin'::text, 'editor'::text]))"
+        },
+        {
+          "name": "rout_member_read",
+          "permissive": true,
+          "roles": [
+            "public"
+          ],
+          "cmd": "SELECT",
+          "using": "rout_is_workspace_member(workspace_id)",
+          "check": null
+        }
+      ],
+      "grants": {
+        "rout_app": [
+          "INSERT",
+          "SELECT",
+          "UPDATE"
+        ]
+      }
+    },
+    {
+      "schema": "public",
       "name": "workspace_root_aliases",
       "columns": [
         {
@@ -21991,6 +22291,12 @@
     },
     {
       "schema": "public",
+      "name": "patch_workspace_profile_draft",
+      "args": "p_workspace_id uuid, p_fields jsonb, p_prefs jsonb, p_drop_prefs text[]",
+      "def": "CREATE OR REPLACE FUNCTION public.patch_workspace_profile_draft(p_workspace_id uuid, p_fields jsonb, p_prefs jsonb, p_drop_prefs text[])\n RETURNS TABLE(revision bigint, published_revision bigint, updated_at timestamp with time zone, published_at timestamp with time zone)\n LANGUAGE plpgsql\n SET search_path TO 'public'\nAS $function$\ndeclare\n  v_fields jsonb := coalesce(p_fields, '{}'::jsonb);\n  v_prefs jsonb := coalesce(p_prefs, '{}'::jsonb);\nbegin\n  if jsonb_typeof(v_fields) <> 'object' or jsonb_typeof(v_prefs) <> 'object' then\n    raise exception 'validation: draft patch must be an object';\n  end if;\n\n  return query\n    update public.workspace_profile_drafts d\n       set payload = (d.payload || (v_fields - 'displayPrefs' - 'username'))\n             || jsonb_build_object(\n               'displayPrefs',\n               ((case when jsonb_typeof(d.payload -> 'displayPrefs') = 'object'\n                      then d.payload -> 'displayPrefs' else '{}'::jsonb end)\n                 - coalesce(p_drop_prefs, '{}'::text[]))\n               || v_prefs\n             ),\n           revision = d.revision + 1,\n           updated_by = public.rout_current_user_id(),\n           updated_at = now()\n     where d.workspace_id = p_workspace_id\n    returning d.revision, d.published_revision, d.updated_at, d.published_at;\n\n  if not found then\n    raise exception 'draft_not_found';\n  end if;\nend;\n$function$"
+    },
+    {
+      "schema": "public",
       "name": "profile_event_is_public",
       "args": "e profile_events",
       "def": "CREATE OR REPLACE FUNCTION public.profile_event_is_public(e profile_events)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select e.published and case e.profile_space\n    when 'alias' then exists (\n      select 1 from public.alias_profiles a join public.profiles p on p.id = a.user_id\n      where a.user_id = e.user_id and a.handle = e.profile_handle and a.enabled\n        and coalesce((a.display_prefs->>'publicProfile')::boolean, true)\n        and not coalesce(p.is_banned,false) and not coalesce(p.is_suspended,false)\n        and coalesce(p.status,'active') not in ('frozen','banned','suspended'))\n    when 'root' then exists (\n      select 1 from public.profiles p where p.id = e.user_id and p.username = e.profile_handle\n        and p.workspace_id is null and coalesce((p.display_prefs->>'publicProfile')::boolean,true)\n        and not coalesce(p.is_banned,false) and not coalesce(p.is_suspended,false)\n        and coalesce(p.status,'active') not in ('frozen','banned','suspended'))\n    when 'workspace' then exists (\n      select 1 from public.workspaces w join public.profiles p on p.workspace_id = w.id\n      where w.id = e.workspace_id and w.slug = e.profile_handle\n        and coalesce((p.display_prefs->>'publicProfile')::boolean,true)\n        and not coalesce(p.is_banned,false) and not coalesce(p.is_suspended,false)\n        and coalesce(p.status,'active') not in ('frozen','banned','suspended'))\n    else false end\n$function$"
@@ -22057,6 +22363,24 @@
     },
     {
       "schema": "public",
+      "name": "rout_agent_claim_preview",
+      "args": "p_token_hash text",
+      "def": "CREATE OR REPLACE FUNCTION public.rout_agent_claim_preview(p_token_hash text)\n RETURNS TABLE(name text, slug text, expires_at timestamp with time zone, claimed boolean, expired boolean, app_name text)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select w.name, w.slug, c.expires_at, c.claimed_at is not null, c.expires_at <= now(),\n         (select o.name from public.oauth_clients o where o.client_id = c.client_id limit 1)\n    from public.agent_workspace_claims c\n    join public.workspaces w on w.id = c.workspace_id\n   where public.rout_current_user_id() is not null and c.token_hash = p_token_hash\n   limit 1\n$function$"
+    },
+    {
+      "schema": "public",
+      "name": "rout_agent_provision_workspace",
+      "args": "p_client_id text, p_name text, p_slug text, p_description text, p_token_hash text",
+      "def": "CREATE OR REPLACE FUNCTION public.rout_agent_provision_workspace(p_client_id text, p_name text, p_slug text, p_description text, p_token_hash text)\n RETURNS TABLE(workspace_id uuid, slug text, expires_at timestamp with time zone)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  v_uid uuid := public.rout_current_user_id();\n  v_open integer;\n  v_ws uuid;\n  v_now timestamptz := now();\nbegin\n  if v_uid is null then raise exception 'not_authenticated'; end if;\n  perform pg_advisory_xact_lock(hashtext('agent_provision:' || v_uid::text));\n  select count(*) into v_open from public.agent_workspace_claims c\n   where c.requested_by = v_uid and c.claimed_at is null and c.expires_at > v_now;\n  if v_open >= 3 then raise exception 'agent_quota_reached'; end if;\n  if exists (select 1 from public.workspaces w where w.slug = lower(p_slug)) then\n    raise exception 'slug_taken';\n  end if;\n\n  insert into public.workspaces (name, slug, description, plan)\n  values (p_name, lower(p_slug), nullif(p_description, ''), 'free')\n  returning id into v_ws;\n\n  insert into public.agent_workspace_claims (workspace_id, client_id, requested_by, token_hash, created_at, expires_at)\n  values (v_ws, p_client_id, v_uid, p_token_hash, v_now, v_now + interval '48 hours');\n\n  return query select v_ws, lower(p_slug), v_now + interval '48 hours';\nend;\n$function$"
+    },
+    {
+      "schema": "public",
+      "name": "rout_claim_agent_workspace",
+      "args": "p_token_hash text",
+      "def": "CREATE OR REPLACE FUNCTION public.rout_claim_agent_workspace(p_token_hash text)\n RETURNS TABLE(workspace_id uuid, slug text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  v_uid uuid := public.rout_current_user_id();\n  v_claim public.agent_workspace_claims%rowtype;\n  v_slug text;\nbegin\n  if v_uid is null then raise exception 'not_authenticated'; end if;\n  select * into v_claim from public.agent_workspace_claims c where c.token_hash = p_token_hash for update;\n  if not found then raise exception 'claim_not_found'; end if;\n  if v_claim.claimed_at is not null then raise exception 'claim_used'; end if;\n  if v_claim.expires_at <= now() then raise exception 'claim_expired'; end if;\n\n  insert into public.workspace_members (workspace_id, user_id, role)\n  values (v_claim.workspace_id, v_uid, 'owner')\n  on conflict on constraint workspace_members_pkey do update set role = 'owner';\n  update public.agent_workspace_claims c\n     set claimed_at = now(), claimed_by = v_uid\n   where c.workspace_id = v_claim.workspace_id;\n  select w.slug into v_slug from public.workspaces w where w.id = v_claim.workspace_id;\n  return query select v_claim.workspace_id, v_slug;\nend;\n$function$"
+    },
+    {
+      "schema": "public",
       "name": "rout_current_user_id",
       "args": "",
       "def": "CREATE OR REPLACE FUNCTION public.rout_current_user_id()\n RETURNS uuid\n LANGUAGE sql\n STABLE\nAS $function$ select nullif(current_setting('rout.current_user_id',true),'')::uuid $function$"
@@ -22084,6 +22408,12 @@
       "name": "rout_public_workspace",
       "args": "p_slug text",
       "def": "CREATE OR REPLACE FUNCTION public.rout_public_workspace(p_slug text)\n RETURNS TABLE(name text, slug text, avatar_url text, description text, domain text, profile_handle text, public_profile jsonb)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select w.name, w.slug, w.avatar_url, w.description,\n         case when w.domain_verified_at is not null then w.domain end,\n         (select p.username from public.profiles p\n           where p.workspace_id = w.id and coalesce((p.display_prefs->>'publicProfile')::boolean, true)\n           order by p.created_at limit 1),\n         case when coalesce((w.public_profile->>'published')::boolean, false) then w.public_profile else '{}'::jsonb end\n  from public.workspaces w where w.slug = lower(p_slug) limit 1 $function$"
+    },
+    {
+      "schema": "public",
+      "name": "rout_purge_unclaimed_agent_workspaces",
+      "args": "",
+      "def": "CREATE OR REPLACE FUNCTION public.rout_purge_unclaimed_agent_workspaces()\n RETURNS integer\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  v_ids uuid[];\nbegin\n  select coalesce(array_agg(c.workspace_id), '{}') into v_ids\n    from (select workspace_id from public.agent_workspace_claims\n           where claimed_at is null and expires_at <= now()\n           order by expires_at\n           limit 500\n           for update skip locked) c;\n  if cardinality(v_ids) = 0 then return 0; end if;\n\n  delete from public.oauth_clients where workspace_id = any (v_ids);\n  delete from public.tracked_qrs where workspace_id = any (v_ids);\n  delete from public.bookings where workspace_id = any (v_ids);\n  delete from public.workspace_transfers where workspace_id = any (v_ids);\n  delete from public.workspaces where id = any (v_ids);\n  return cardinality(v_ids);\nend;\n$function$"
     },
     {
       "schema": "public",

@@ -132,5 +132,5 @@ const machineProfileMiddleware = createMiddleware().server(async ({ request, nex
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [],
-  requestMiddleware: [errorMiddleware, appModeMiddleware, customDomainRootMiddleware, machineProfileMiddleware, securityHeadersMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, appModeMiddleware, customDomainRootMiddleware, securityHeadersMiddleware, machineProfileMiddleware, csrfMiddleware],
 }));

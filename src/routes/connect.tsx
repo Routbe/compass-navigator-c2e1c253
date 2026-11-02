@@ -87,7 +87,7 @@ function ConnectPage() {
 
         {clientId ? (
           <>
-            <h1 className="mt-6 text-center font-display text-2xl">{t("connect.title", { app: appName })}</h1>
+            <h1 className="mt-6 text-center font-display text-2xl">{app?.name ? t("connect.title", { app: app.name }) : t("connect.titleUnknown")}</h1>
             <p className="mt-2 text-center text-sm text-muted-foreground">{t("connect.intro", { app: appName })}</p>
             <ul className="mt-6 space-y-3 text-sm">
               <li className="flex gap-3"><QrCode className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{t("connect.point.assets")}</li>

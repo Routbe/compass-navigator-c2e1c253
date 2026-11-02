@@ -225,5 +225,6 @@
   "connect.signIn": "Ich habe schon ein Konto",
   "connect.devTitle": "Einen KI-Agenten verbinden",
   "connect.devIntro": "Agenten schicken ihre Nutzer mit standardmäßigen OAuth-2.1-Parametern (PKCE) hierher. Nach der Zustimmung erhalten sie einen Code, den sie gegen ein kurzlebiges Token tauschen.",
-  "connect.devDocs": "Entwicklerdokumentation"
+  "connect.devDocs": "Entwicklerdokumentation",
+  "connect.titleUnknown": "Verbinde deinen KI-Assistenten mit ROUT"
 }

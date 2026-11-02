@@ -365,7 +365,7 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
   const [consented, setConsented] = useState(false);
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!consented) { toast.error(t("auth.consent.required")); return; }
+    if (!consented) { toast.error(t("auth.signupConsent.required")); return; }
     if (unavailable) { toast.error(AUTH_UNAVAILABLE_TEXT[locale]); return; }
     if (adminPortal) return;
     if (!emailAccepted()) return;
@@ -444,9 +444,9 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
 
           {!adminPortal && (
             <p data-testid="auth-implicit-consent" className="mb-2 text-center text-[11px] leading-relaxed text-muted-foreground">
-              {t("auth.consent.implicitBefore")}{" "}
-              <Link to="/terms" className="underline underline-offset-2 hover:text-foreground">{t("auth.consent.termsShort")}</Link>{" "}
-              {t("auth.consent.implicitAfter")}
+              {t("auth.signupConsent.implicitBefore")}{" "}
+              <Link to="/terms" className="underline underline-offset-2 hover:text-foreground">{t("auth.signupConsent.termsShort")}</Link>{" "}
+              {t("auth.signupConsent.implicitAfter")}
             </p>
           )}
           <div
@@ -629,11 +629,11 @@ export default function AuthNeon({ initialMode = "magic" }: { initialMode?: Mode
                   className="mt-0.5"
                 />
                 <label htmlFor="auth-signup-consent" className="text-xs leading-relaxed text-muted-foreground">
-                  {t("auth.consent.before")}{" "}
-                  <Link to="/terms" className="font-medium text-foreground underline underline-offset-2">{t("auth.consent.terms")}</Link>{" "}
-                  {t("auth.consent.and")}{" "}
-                  <Link to="/privacy" className="font-medium text-foreground underline underline-offset-2">{t("auth.consent.privacy")}</Link>{" "}
-                  {t("auth.consent.after")}
+                  {t("auth.signupConsent.before")}{" "}
+                  <Link to="/terms" className="font-medium text-foreground underline underline-offset-2">{t("auth.signupConsent.terms")}</Link>{" "}
+                  {t("auth.signupConsent.and")}{" "}
+                  <Link to="/privacy" className="font-medium text-foreground underline underline-offset-2">{t("auth.signupConsent.privacy")}</Link>{" "}
+                  {t("auth.signupConsent.after")}
                 </label>
               </div>
               <Button

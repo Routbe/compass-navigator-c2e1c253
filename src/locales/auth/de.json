@@ -201,5 +201,14 @@
   "auth.scope.profileRead": "Öffentliches Profil (Handle, Avatar, Bio)",
   "auth.scope.legalName": "Offizieller rechtlicher Name (verifizierte Identität nötig)",
   "auth.scope.nationalId": "Nationalregisternummer — nur für vertrauenswürdige Partner, zusätzliche Bestätigung",
-  "auth.consent.trustedPartner": "Diese App ist ein vertrauenswürdiger ROUT-Identitätspartner."
+  "auth.consent.trustedPartner": "Diese App ist ein vertrauenswürdiger ROUT-Identitätspartner.",
+  "auth.signupConsent.before": "Ich akzeptiere die",
+  "auth.signupConsent.terms": "Allgemeinen Geschäftsbedingungen",
+  "auth.signupConsent.and": "und die",
+  "auth.signupConsent.privacy": "Datenschutzerklärung",
+  "auth.signupConsent.after": "und bestätige, dass ich 16 Jahre oder älter bin (oder die Zustimmung eines Elternteils/Vormunds habe).",
+  "auth.signupConsent.required": "Setze das Häkchen, um dein Konto zu erstellen.",
+  "auth.signupConsent.implicitBefore": "Mit der Anmeldung akzeptierst du die",
+  "auth.signupConsent.termsShort": "Bedingungen",
+  "auth.signupConsent.implicitAfter": "und bestätigst, 16+ zu sein."
 }

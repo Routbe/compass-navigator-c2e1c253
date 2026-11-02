@@ -48,7 +48,7 @@
 - [x] Final check: tsgo 0, 1,456 tests, 59 internal links on 12 key pages OK
 
 ## Agentic web — phase 1 (now)
-- [ ] Scoped agent API keys: assets:write, profile:draft, identity:read_public (never identity_relays); UI + enforcement
+- [ ] Agent scopes assets:write, profile:draft, identity:read_public (never identity_relays) only via short-lived (≤1 h) OAuth access tokens; static API keys can never carry them; validated on every request
 - [ ] Standard agent responses: human_action_required (safe temporary action_url) and 402 upgrade (upgrade_url + reason)
 - [ ] /llms.txt and /.well-known/openapi.json
 - [ ] Headless Profile Hub: JSON for Accept: application/json / AI user agents on /<handle> and /u/<alias>
@@ -61,3 +61,5 @@
 - [ ] Agent M2M API: workspaces, oauth-apps (secret once), assets; quota checker + 402 before every mutation
 - [ ] Chronos audit log with the agent as actor; bots visible in Team settings
 - [ ] Custom domains M2M: pending + DNS records, verify endpoint
+- [ ] Agent rollbacks: previous_state snapshot only for Agent/Bot mutations (none for humans) + POST /api/audit/revert/{log_id}
+- [ ] Outbound agent webhooks: agent_webhook_url, signed events (workspace.upgraded, domain.verified)

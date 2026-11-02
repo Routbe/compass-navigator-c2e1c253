@@ -46,3 +46,18 @@
 - [x] user_verified_claims table (0159, rout_app read-only) + Sovereign Trust widget on /dashboard/identity
 - [x] OIDC scopes verify_human / verify_18_plus prepared (boolean payload, not yet issued)
 - [x] Final check: tsgo 0, 1,456 tests, 59 internal links on 12 key pages OK
+
+## Agentic web — phase 1 (now)
+- [ ] Scoped agent API keys: assets:write, profile:draft, identity:read_public (never identity_relays); UI + enforcement
+- [ ] Standard agent responses: human_action_required (safe temporary action_url) and 402 upgrade (upgrade_url + reason)
+- [ ] /llms.txt and /.well-known/openapi.json
+- [ ] Headless Profile Hub: JSON for Accept: application/json / AI user agents on /<handle> and /u/<alias>
+- [ ] /connect reverse-handshake entry onto the existing OIDC consent (/oauth/authorize)
+- [ ] GET /api/badge/verify: verified human + requesting origin matches a registered domain
+
+## Agentic web — phase 2 (after phase 1)
+- [ ] Agent-provisioned workspaces: no owner, claim token only, NO email (agent delivers the link), hard delete after 48 h incl. OAuth apps, QR codes, drafts
+- [ ] Claim handoff: claimer becomes Owner, agent becomes a visible Connected App/Bot (revocable)
+- [ ] Agent M2M API: workspaces, oauth-apps (secret once), assets; quota checker + 402 before every mutation
+- [ ] Chronos audit log with the agent as actor; bots visible in Team settings
+- [ ] Custom domains M2M: pending + DNS records, verify endpoint

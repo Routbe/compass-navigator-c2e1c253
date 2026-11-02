@@ -108,6 +108,25 @@ export async function saveProfileDraft(
   }
 }
 
+/**
+ * Atomic section merge (0160): only the given fields and display-pref keys
+ * change; everything else in the draft stays as stored. No revision guard —
+ * disjoint sections commute, and the new revision is returned for publish.
+ */
+export async function patchProfileDraft(
+  userId: string,
+  space: ProfileSpace,
+  patch: { fields?: Record<string, unknown>; prefs?: Record<string, unknown>; dropPrefs?: string[] },
+): Promise<DraftMeta> {
+  const rows = (await sql.query(
+    `select * from public.patch_profile_draft($1::uuid, $2::text, $3::jsonb, $4::jsonb, $5::text[])`,
+    [userId, space, JSON.stringify(patch.fields ?? {}), JSON.stringify(patch.prefs ?? {}), patch.dropPrefs ?? []],
+  )) as Row[];
+  const row = rows[0];
+  if (!row) throw new Error("draft_save_failed");
+  return rowMeta(row);
+}
+
 export async function publishProfileDraft(
   userId: string,
   space: ProfileSpace,

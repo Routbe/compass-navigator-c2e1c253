@@ -70,7 +70,6 @@ export const MERGE_TABLES: Readonly<Record<string, MergeTableRule>> = {
   pro_waitlist: one(),
   profile_ingest_tokens: one(),
   tip_settings: one(),
-  user_birthdates: one(),
   user_calendar_feeds: one(),
   user_custom_presence: one(),
   user_music_status: one(),

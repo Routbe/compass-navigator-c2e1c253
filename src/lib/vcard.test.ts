@@ -10,7 +10,6 @@ describe("vCard component", () => {
       title: "Founder",
       phones: [{ type: "work", number: "+32 2 000 00 00" }, { type: "cell", number: "+32 470 00 00 00" }, { type: "home", number: "011" }],
       address: "Grote Markt 1, Brussel",
-      birthday: "1990-05-04",
     });
     expect(v).toContain("TITLE:Founder");
     expect(v).toContain("TEL;TYPE=WORK:+32 2 000 00 00");

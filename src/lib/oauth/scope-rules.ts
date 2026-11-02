@@ -1,10 +1,11 @@
 /** Selective-disclosure scopes for "Login met ROUT". Pure and browser-safe. */
+import { AGENT_SCOPES } from "@/lib/agent/agent-scopes";
 
 export const IDENTITY_SCOPES = ["sybil:verify", "profile:read", "identity:legal_name", "identity:national_id"] as const;
 export type IdentityScope = (typeof IDENTITY_SCOPES)[number];
 
 /** Scopes the member can switch off on the consent screen (openid never). */
-export const OPTIONAL_SCOPES: readonly string[] = ["sybil:verify", "profile:read", "identity:legal_name", "identity:national_id"];
+export const OPTIONAL_SCOPES: readonly string[] = ["sybil:verify", "profile:read", "identity:legal_name", "identity:national_id", ...AGENT_SCOPES];
 
 /** Scopes whose disclosure is written to identity_disclosure_logs. */
 export const SENSITIVE_SCOPES: readonly string[] = ["sybil:verify", "identity:legal_name", "identity:national_id"];
@@ -68,6 +69,8 @@ export const SUPPORTED_SCOPES = [
   "profile:read",
   "identity:legal_name",
   "identity:national_id",
+  // Agent scopes: human-delegated, short-lived tokens only (src/lib/agent/agent-scopes.ts).
+  ...AGENT_SCOPES,
 ] as const;
 export type SupportedScope = (typeof SUPPORTED_SCOPES)[number];
 

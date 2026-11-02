@@ -210,5 +210,21 @@
   "auth.signupConsent.required": "Cochez la case pour créer votre compte.",
   "auth.signupConsent.implicitBefore": "En vous connectant, vous acceptez les",
   "auth.signupConsent.termsShort": "Conditions",
-  "auth.signupConsent.implicitAfter": "et confirmez avoir 16 ans ou plus."
+  "auth.signupConsent.implicitAfter": "et confirmez avoir 16 ans ou plus.",
+  "auth.scope.agentAssets": "Créer des codes QR et des liens courts pour vous (dans votre forfait)",
+  "auth.scope.agentDraft": "Préparer des brouillons de profil — vous publiez toujours vous-même",
+  "auth.scope.agentIdentity": "Voir si vous êtes un humain vérifié (jamais vos relais ni votre nom légal)",
+  "connect.unknownApp": "Un assistant IA",
+  "connect.loading": "Chargement",
+  "connect.title": "Connecter {{app}} à ROUT",
+  "connect.intro": "{{app}} demande l'accès à votre compte ROUT pour gérer vos codes QR et liens. Créez un compte ou connectez-vous pour examiner la demande.",
+  "connect.point.assets": "Il ne peut faire que ce que vous approuvez à l'écran suivant, dans les limites de votre forfait.",
+  "connect.point.control": "Publier en ligne et vérifier votre identité restent toujours vos décisions.",
+  "connect.point.ephemeral": "L'accès passe par des jetons de courte durée (1 heure max.) que vous pouvez révoquer à tout moment dans Applications connectées.",
+  "connect.signUp": "Créer un compte ROUT",
+  "connect.signIn": "J'ai déjà un compte",
+  "connect.devTitle": "Connecter un agent IA",
+  "connect.devIntro": "Les agents envoient leur utilisateur ici avec des paramètres OAuth 2.1 standard (PKCE). Après consentement, ils reçoivent un code qu'ils échangent contre un jeton de courte durée.",
+  "connect.devDocs": "Documentation développeurs",
+  "connect.titleUnknown": "Connectez votre assistant IA à ROUT"
 }

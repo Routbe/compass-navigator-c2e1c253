@@ -7,7 +7,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { RoutLogo } from "@/components/RoutLogo";
-import { BadgeCheck, Check, Eye, Fingerprint, IdCard, KeyRound, Loader2, Lock, Mail, ShieldCheck, User } from "lucide-react";
+import { BadgeCheck, Bot, Check, Eye, Fingerprint, IdCard, KeyRound, Loader2, Lock, Mail, PenLine, QrCode, ShieldCheck, User } from "lucide-react";
 import { OPTIONAL_SCOPES } from "@/lib/oauth/scope-rules";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -93,6 +93,9 @@ const SCOPE_TEXT: Record<string, { icon: typeof User; text: string }> = {
   "profile:read": { icon: User, text: "auth.scope.profileRead" },
   "identity:legal_name": { icon: IdCard, text: "auth.scope.legalName" },
   "identity:national_id": { icon: Lock, text: "auth.scope.nationalId" },
+  "assets:write": { icon: QrCode, text: "auth.scope.agentAssets" },
+  "profile:draft": { icon: PenLine, text: "auth.scope.agentDraft" },
+  "identity:read_public": { icon: Bot, text: "auth.scope.agentIdentity" },
 };
 
 const PROVIDER_LABEL: Record<string, string> = {

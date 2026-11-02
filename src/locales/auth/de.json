@@ -210,5 +210,21 @@
   "auth.signupConsent.required": "Setze das Häkchen, um dein Konto zu erstellen.",
   "auth.signupConsent.implicitBefore": "Mit der Anmeldung akzeptierst du die",
   "auth.signupConsent.termsShort": "Bedingungen",
-  "auth.signupConsent.implicitAfter": "und bestätigst, 16+ zu sein."
+  "auth.signupConsent.implicitAfter": "und bestätigst, 16+ zu sein.",
+  "auth.scope.agentAssets": "QR-Codes und Kurzlinks für dich erstellen (im Rahmen deines Tarifs)",
+  "auth.scope.agentDraft": "Profilentwürfe vorbereiten — veröffentlichen tust du immer selbst",
+  "auth.scope.agentIdentity": "Sehen, ob du ein verifizierter Mensch bist (nie deine Relays oder deinen amtlichen Namen)",
+  "connect.unknownApp": "Ein KI-Assistent",
+  "connect.loading": "Wird geladen",
+  "connect.title": "{{app}} mit ROUT verbinden",
+  "connect.intro": "{{app}} bittet um Zugriff auf dein ROUT-Konto, um QR-Codes und Links für dich zu verwalten. Erstelle ein Konto oder melde dich an, um die Anfrage zu prüfen.",
+  "connect.point.assets": "Es kann nur, was du auf dem nächsten Bildschirm erlaubst, im Rahmen deines Tarifs.",
+  "connect.point.control": "Live veröffentlichen und deine Identität verifizieren bleiben immer deine Entscheidung.",
+  "connect.point.ephemeral": "Der Zugriff läuft über kurzlebige Tokens (max. 1 Stunde), die du jederzeit unter Verbundene Apps widerrufen kannst.",
+  "connect.signUp": "ROUT-Konto erstellen",
+  "connect.signIn": "Ich habe schon ein Konto",
+  "connect.devTitle": "Einen KI-Agenten verbinden",
+  "connect.devIntro": "Agenten schicken ihre Nutzer mit standardmäßigen OAuth-2.1-Parametern (PKCE) hierher. Nach der Zustimmung erhalten sie einen Code, den sie gegen ein kurzlebiges Token tauschen.",
+  "connect.devDocs": "Entwicklerdokumentation",
+  "connect.titleUnknown": "Verbinde deinen KI-Assistenten mit ROUT"
 }
